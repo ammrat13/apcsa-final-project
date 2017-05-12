@@ -87,5 +87,4 @@ public class Complex {
     public Color getColor(){
         return null;
     }
-
 }
