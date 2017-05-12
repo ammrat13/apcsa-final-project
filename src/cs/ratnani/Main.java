@@ -1,5 +1,8 @@
 package cs.ratnani;
 
+import cs.ratnani.ui.TopWindow;
+
+
 /**
  * This class provides the resources to run this application. It contains one
  * method: `main`, which will do just that.
@@ -9,6 +12,7 @@ package cs.ratnani;
  */
 public class Main {
     public static void main(String[] args){
-        System.out.println("Test");
+        TopWindow window = new TopWindow("Test");
+        window.setVisible(true);
     }
 }
