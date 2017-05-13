@@ -3,13 +3,16 @@ package cs.ratnani.util;
 /**
  * This class represents a Tuple, an ordered collection of two objects. It also
  * provides methods to access and set each object.
+ *
+ * @author Ammar Ratnani
+ * @version 0.0
  */
 public class Tuple<T1,T2> {
 
     // Private Variables: ------------------------------------------------------
 
-    T1 fst;
-    T2 snd;
+    private T1 fst;
+    private T2 snd;
 
 
     // Constructors: -----------------------------------------------------------

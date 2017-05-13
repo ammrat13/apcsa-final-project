@@ -1,6 +1,6 @@
 package cs.ratnani.math.complex;
 
-import java.awt.Color;
+import java.awt.*;
 
 
 /**
@@ -30,8 +30,19 @@ public class Complex {
      * @param b The imaginary part of the new number
      */
     public Complex(double a, double b){
-        setRe(a);
-        setRe(b);
+        re = a;
+        im = b;
+    }
+
+    /**
+     * Constructor that takes in real numbers and makes them complex (imaginary
+     * part is 0)
+     *
+     * @param a The real part of the new number
+     */
+    public Complex(double a){
+        re = a;
+        im = 0.0;
     }
 
 
@@ -40,42 +51,31 @@ public class Complex {
     /** @return The real part of this number */
     public double getRe(){ return re; }
 
-    /** @param a The new real part of this number */
-    public void setRe(double a){ re = a; }
-
     /** @return The imaginary part of this number */
     public double getIm(){ return im; }
 
-    /** @param b The new imaginary part of this number */
-    public void setIm(double b){ im = b; }
-
 
     // Public Methods: ---------------------------------------------------------
+
+    /** @return The string representation of this number in re-im format to
+     *          three decimal places
+     */
+    public String toString(){
+        if(im >= 0)
+            return String.format("%.3f + %.3fi", re, im);
+        else
+            // Change it to a minus sign if `im` is negative
+            return String.format("%.3f - %.3fi", re, -1*im);
+    }
 
     /** @return The complex modulus (absolute value) of this number */
     public double getAbs(){
         return Math.sqrt(re*re + im*im);
     }
 
-    /** @param r The new complex modulus (absolute value) */
-    public void setAbs(double r){
-        // Scale both `re` and `im` proportionally to the new radius `r`
-        double oldR = getAbs();
-        re = (r/oldR) * re;
-        im = (r/oldR) * im;
-    }
-
     /** @return The complex argument (theta) of this number in radians */
     public double getArg(){
         return Math.atan2(im, re);
-    }
-
-    /** @param t The new complex argument (theta) in radians */
-    public void setArg(double t){
-        double oldR = getAbs();
-        double oldT = getArg();
-        re = oldR * Math.cos(oldT + t);
-        im = oldR * Math.sin(oldT + t);
     }
 
     /**
