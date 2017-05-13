@@ -12,7 +12,7 @@ import cs.ratnani.ui.TopWindow;
  */
 public class Main {
     public static void main(String[] args){
-        TopWindow window = new TopWindow("Test");
+        TopWindow window = new TopWindow("AP Computer Science A - Final Project");
         window.setVisible(true);
     }
 }

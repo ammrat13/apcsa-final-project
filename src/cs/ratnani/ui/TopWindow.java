@@ -33,6 +33,7 @@ public class TopWindow extends JFrame {
 
         this.add(new FuncBar(), BorderLayout.PAGE_START);
         this.add(new ButtonBar(), BorderLayout.PAGE_END);
+        this.add(new MidPanel(), BorderLayout.CENTER);
     }
 
 
@@ -93,9 +94,105 @@ public class TopWindow extends JFrame {
             JButton about = new JButton("About...");
             // ActionListeners for buttons handle clicks
             about.addActionListener(
-                    e -> JOptionPane.showMessageDialog(null, ABOUT_TEXT)
+                    e -> JOptionPane.showMessageDialog(null,
+                            ABOUT_TEXT,
+                            "About",
+                            JOptionPane.PLAIN_MESSAGE
+                    )
             );
             this.add(about);
+        }
+
+    }
+
+    /**
+     * This class contains the middle part of the program and is the largest
+     * part. It contains the plot and additional information about the complex
+     * number being pointed to
+     */
+    public class MidPanel extends JPanel{
+
+        // Constructors: -------------------------------------------------------
+
+        public MidPanel(){
+            this.setLayout(new GridBagLayout());
+
+            // We add the plot and the info boxes to the layout
+            GridBagConstraints plotC = new GridBagConstraints();
+            plotC.gridx = 0;
+            plotC.gridy = 0;
+            plotC.gridwidth = 2;
+            plotC.fill = GridBagConstraints.BOTH;
+            plotC.weighty = .6;
+            plotC.weightx = 1.0;
+            plotC.insets = new Insets(10,10,10,10);
+            this.add(new Plot(), plotC);
+        }
+
+
+        // Public classes: -----------------------------------------------------
+
+        /**
+         * This class contains the plot of the function inputted.
+         */
+        public class Plot extends JPanel{
+
+            // Constructors: ---------------------------------------------------
+
+            public Plot(){
+                this.setLayout(new GridBagLayout());
+
+                // We have four JTextFields surrounding a central plot
+                JTextField imUp = new JTextField(5);
+                imUp.setText("15");
+                imUp.setHorizontalAlignment(JTextField.CENTER);
+                GridBagConstraints imUpC = new GridBagConstraints();
+                imUpC.gridx = 1;
+                imUpC.gridy = 0;
+                imUpC.anchor = GridBagConstraints.PAGE_START;
+                this.add(imUp, imUpC);
+
+                JTextField imDo = new JTextField(5);
+                imDo.setText("-15");
+                imDo.setHorizontalAlignment(JTextField.CENTER);
+                GridBagConstraints imDoC = new GridBagConstraints();
+                imDoC.gridx = 1;
+                imDoC.gridy = 2;
+                imDoC.anchor = GridBagConstraints.PAGE_END;
+                this.add(imDo, imDoC);
+
+                JTextField reUp = new JTextField(5);
+                reUp.setText("15");
+                reUp.setHorizontalAlignment(JTextField.CENTER);
+                GridBagConstraints reUpC = new GridBagConstraints();
+                reUpC.gridx = 2;
+                reUpC.gridy = 1;
+                reUpC.anchor = GridBagConstraints.LINE_END;
+                this.add(reUp, reUpC);
+
+                JTextField reDo = new JTextField(5);
+                reDo.setText("-15");
+                reDo.setHorizontalAlignment(JTextField.CENTER);
+                GridBagConstraints reDoC = new GridBagConstraints();
+                reDoC.gridx = 0;
+                reDoC.gridy = 1;
+                reDoC.anchor = GridBagConstraints.LINE_START;
+                this.add(reDo, reDoC);
+
+
+                JPanel plot = new JPanel();
+                plot.setSize(new Dimension(300,300));
+                plot.setBackground(Color.BLACK);
+                GridBagConstraints plotC = new GridBagConstraints();
+                plotC.gridx = 1;
+                plotC.gridy = 1;
+                plotC.fill = GridBagConstraints.BOTH;
+                plotC.weightx = 1.0;
+                plotC.weighty = 1.0;
+                plotC.insets = new Insets(10,10,10,10);
+                this.add(plot, plotC);
+            }
+
         }
 
     }
