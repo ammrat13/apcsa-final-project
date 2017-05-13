@@ -17,8 +17,8 @@ public class Complex {
     // Instance Variables: -----------------------------------------------------
 
     // We store in re-im format
-    private double re;
-    private double im;
+    private final double re;
+    private final double im;
 
 
     // Constructors: -----------------------------------------------------------

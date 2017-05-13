@@ -11,8 +11,8 @@ public class Tuple<T1,T2> {
 
     // Private Variables: ------------------------------------------------------
 
-    private T1 fst;
-    private T2 snd;
+    private final T1 fst;
+    private final T2 snd;
 
 
     // Constructors: -----------------------------------------------------------
@@ -26,9 +26,7 @@ public class Tuple<T1,T2> {
     // Getters/Setters: --------------------------------------------------------
 
     public T1 fst() { return fst; }
-    public void setFst(T1 f) { fst = f; }
 
     public T2 snd() { return snd; }
-    public void setSnd(T2 s) { snd = s; }
 
 }
