@@ -197,7 +197,8 @@ public class TopWindow extends JFrame {
 
                 plot = new JPanel();
                 plot.setSize(new Dimension(300,300));
-                plot.setBackground(Color.BLACK);
+                plot.setBackground(Color.GRAY);
+                plot.setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 GridBagConstraints plotC = new GridBagConstraints();
                 plotC.gridx = 1;
                 plotC.gridy = 1;
