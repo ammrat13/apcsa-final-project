@@ -79,9 +79,9 @@ public class Complex {
     }
 
     /**
-     * Returns the color of this number as specified on Wikipedia:
-     * <a href="https://en.wikipedia.org/wiki/Color_wheel_graphs_of_complex_functions">
-     *     https://en.wikipedia.org/wiki/Color_wheel_graphs_of_complex_functions
+     * Returns the color of this number as specified on RapidTables:
+     * <a href="http://www.rapidtables.com/convert/color/hsl-to-rgb.htm">
+     *     http://www.rapidtables.com/convert/color/hsl-to-rgb.htm
      * </a>
      *
      * @return The color of this number
@@ -94,14 +94,14 @@ public class Complex {
         double L = (1 - Math.pow(2.0, -1*getAbs()));
         double S = 1.0;
 
-        // Convert to RGB as specified on Wikipedia:
-        //  https://en.wikipedia.org/wiki/HSL_and_HSV#Converting_to_RGB
+        // Convert to RGB as specified on RapidTables:
+        //  http://www.rapidtables.com/convert/color/hsl-to-rgb.htm
         double C = (1 - Math.abs(2*L - 1)) * S;
         double Hp = H / (Math.PI/3);
         double X = C * (1 - Math.abs(Hp%2 - 1));
         double R; double G; double B;
 
-        switch((int) Hp){
+        switch((int) H){
             case 0:
                 R = C;
                 G = X;
@@ -133,11 +133,12 @@ public class Complex {
                 B = X;
         }
 
-        double m = L - .05*C;
+        double m = L - .5*C;
         R += m;
         G += m;
         B += m;
 
-        return new Color((int) R, (int) G, (int) B);
+        // R, G, and B are between 0 and 1, so we have to multiply by 255
+        return new Color((int) (255*R), (int) (255*G), (int) (255*B));
     }
 }
