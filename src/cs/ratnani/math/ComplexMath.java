@@ -1,4 +1,4 @@
-package cs.ratnani.math.complex;
+package cs.ratnani.math;
 
 /**
  * This class contains static functions on complex numbers, such as add,

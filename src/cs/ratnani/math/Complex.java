@@ -1,4 +1,4 @@
-package cs.ratnani.math.complex;
+package cs.ratnani.math;
 
 import java.awt.*;
 
