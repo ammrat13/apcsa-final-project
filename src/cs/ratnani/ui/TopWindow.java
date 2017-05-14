@@ -6,7 +6,8 @@ import java.awt.*;
 
 /**
  * This class represents the top level window / main window. It contains all
- * the other components, and is the main ui for this application.
+ * the other components, and is the main ui for this application. Its subclasses
+ * are all of its components.
  *
  * @author Ammar Ratnani
  * @version 0.0
@@ -25,12 +26,14 @@ public class TopWindow extends JFrame {
     // Constructors: -----------------------------------------------------------
 
     public TopWindow(String n){
+        // Set the window title to the name passed
         super(n);
 
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(700,700);
         this.setLayout(new BorderLayout());
 
+        // Add all the components
         this.add(new FuncBar(), BorderLayout.PAGE_START);
         this.add(new ButtonBar(), BorderLayout.PAGE_END);
         this.add(new MidPanel(), BorderLayout.CENTER);
@@ -56,6 +59,7 @@ public class TopWindow extends JFrame {
             this.setLayout(new GridBagLayout());
 
             // This consists of a JLabel and a JTextField
+
             // JLabel
             JLabel funcLabel = new JLabel("f(z) = ");
             GridBagConstraints funcLabelC = new GridBagConstraints();
@@ -65,16 +69,17 @@ public class TopWindow extends JFrame {
             funcLabelC.anchor = GridBagConstraints.LINE_START;
             this.add(funcLabel, funcLabelC);
 
-            // JTextField
-            funcField = new JTextField(9999);
+            // JTextField: we will access it later, so we make it an instance
+            //  variable
+            funcField = new JTextField(Integer.MAX_VALUE);
+                // No bound on the columns
             GridBagConstraints funcFieldC = new GridBagConstraints();
             funcFieldC.gridx = 1;
             funcFieldC.gridy = 0;
             funcFieldC.fill = GridBagConstraints.HORIZONTAL;
-                // Necessary to tell it to fill due to its weight
-            funcFieldC.insets = new Insets(10,0,10,10);
             funcFieldC.weightx = 1.0;
-                // Necessary to make the bar span to the end of the window
+            funcFieldC.insets = new Insets(10,0,10,10);
+                // No margin on the left as the label already has it
             this.add(funcField, funcFieldC);
 
         }
@@ -93,6 +98,7 @@ public class TopWindow extends JFrame {
             //  right
             this.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10));
 
+            // TODO: Add export functionality
             JButton export = new JButton("Export...");
             this.add(export);
 
@@ -113,7 +119,7 @@ public class TopWindow extends JFrame {
     /**
      * This class contains the middle part of the program and is the largest
      * part. It contains the plot and additional information about the complex
-     * number being pointed to
+     * number being pointed to. It has subclasses for each of its components.
      */
     public class MidPanel extends JPanel{
 
@@ -122,16 +128,19 @@ public class TopWindow extends JFrame {
         public MidPanel(){
             this.setLayout(new GridBagLayout());
 
-            // We add the plot and the info boxes to the layout
+            // We add the plot to the layout
             GridBagConstraints plotC = new GridBagConstraints();
             plotC.gridx = 0;
             plotC.gridy = 0;
             plotC.gridwidth = 2;
+                // The info boxes each take one column
             plotC.fill = GridBagConstraints.BOTH;
             plotC.weighty = .6;
             plotC.weightx = 1.0;
             plotC.insets = new Insets(10,10,10,10);
             this.add(new Plot(), plotC);
+
+            // TODO: Add Info Boxes
         }
 
 
@@ -158,6 +167,8 @@ public class TopWindow extends JFrame {
                 this.setLayout(new GridBagLayout());
 
                 // We have four JTextFields surrounding a central plot
+                // We make all of them instance variables as we will have to
+                //  access them later.
                 imUp = new JTextField(5);
                 imUp.setText("15");
                 imUp.setHorizontalAlignment(JTextField.CENTER);
@@ -195,6 +206,7 @@ public class TopWindow extends JFrame {
                 this.add(reDo, reDoC);
 
 
+                // TODO: Make the plot area do something
                 plot = new JPanel();
                 plot.setSize(new Dimension(300,300));
                 plot.setBackground(Color.GRAY);

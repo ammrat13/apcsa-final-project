@@ -1,7 +1,8 @@
 package cs.ratnani.math.complex;
 
 /**
- * This class contains static functions on complex numbers.
+ * This class contains static functions on complex numbers, such as add,
+ * multiply, exponent, etc.
  *
  * @see Complex
  * @author Ammar Ratnani
@@ -10,8 +11,8 @@ package cs.ratnani.math.complex;
 public class ComplexMath {
 
     /**
-     * @param a A summend
-     * @param b A summend
+     * @param a A summand
+     * @param b A summand
      * @return a+b
      */
     public static Complex add(Complex a, Complex b){

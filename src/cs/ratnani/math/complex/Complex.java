@@ -69,14 +69,10 @@ public class Complex {
     }
 
     /** @return The complex modulus (absolute value) of this number */
-    public double getAbs(){
-        return Math.sqrt(re*re + im*im);
-    }
+    public double getAbs(){ return Math.sqrt(re*re + im*im); }
 
     /** @return The complex argument (theta) of this number in radians */
-    public double getArg(){
-        return Math.atan2(im, re);
-    }
+    public double getArg(){ return Math.atan2(im, re); }
 
     /**
      * Returns the color of this number as specified on RapidTables:
@@ -96,6 +92,8 @@ public class Complex {
 
         // Convert to RGB as specified on RapidTables:
         //  http://www.rapidtables.com/convert/color/hsl-to-rgb.htm
+        // As far as I know, `Color` does not take HLS, so we have to convert
+        //  manually
         double C = (1 - Math.abs(2*L - 1)) * S;
         double Hp = H / (Math.PI/3);
         double X = C * (1 - Math.abs(Hp%2 - 1));

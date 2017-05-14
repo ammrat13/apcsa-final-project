@@ -1,8 +1,8 @@
 package cs.ratnani.util;
 
 /**
- * This class represents a Tuple, an ordered collection of two objects. It also
- * provides methods to access and set each object.
+ * This class represents a Tuple, an immutable ordered collection of two
+ * objects. It also provides methods to access each object.
  *
  * @author Ammar Ratnani
  * @version 0.0
