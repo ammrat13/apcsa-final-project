@@ -14,6 +14,10 @@ import java.util.Stack;
  */
 public class ComplexMath {
 
+    public static final Complex ZERO = new Complex();
+    public static final Complex ONE = new Complex(1);
+    public static final Complex I = new Complex(0,1);
+
     /**
      * @param a A summand
      * @param b A summand
@@ -61,6 +65,14 @@ public class ComplexMath {
     public static Complex div(Complex a, Complex b){
         // a / b == a * (1 / b)
         return mul(a, inv(b));
+    }
+
+    /**
+     * @param z A complex number
+     * @return -z
+     */
+    public static Complex negate(Complex z){
+        return new Complex(-1*z.getRe(), -1*z.getIm());
     }
 
     /**
@@ -115,6 +127,34 @@ public class ComplexMath {
         return new Complex(
                 Math.log(z.getAbs()),
                 z.getArg()
+        );
+    }
+
+    /**
+     * @param z A complex number
+     * @return sin(z)
+     */
+    public static Complex sin(Complex z){
+        //           exp(iz) - exp(-iz)
+        // sin(z) = --------------------
+        //                   2i
+        return div(
+                sub( exp(mul(I,z)), exp(negate(mul(I,z))) ),
+                mul(new Complex(2), I)
+        );
+    }
+
+    /**
+     * @param z A complex number
+     * @return cos(z)
+     */
+    public static Complex cos(Complex z){
+        //           exp(iz) + exp(-iz)
+        // cos(z) = --------------------
+        //                   2
+        return div(
+                add( exp(mul(I,z)), exp(negate(mul(I,z))) ),
+                new Complex(2)
         );
     }
 
@@ -188,6 +228,17 @@ public class ComplexMath {
                         case "ln": {
                             vals.push(ln(vals.pop()));
                             break;
+                        }
+                        case "sin": {
+                            vals.push(sin(vals.pop()));
+                            break;
+                        }
+                        case "cos": {
+                            vals.push(cos(vals.pop()));
+                            break;
+                        }
+                        default: {
+                            throw new IllegalArgumentException("Token '" + t + "' not defined");
                         }
                     }
                 } catch(EmptyStackException f){
