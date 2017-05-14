@@ -48,17 +48,13 @@ public class TopWindow extends JFrame {
      */
     public class FuncBar extends JPanel{
 
-        // Private Variables: --------------------------------------------------
-
-        private JTextField funcField;
-
 
         // Constructors: -------------------------------------------------------
 
         public FuncBar(){
             this.setLayout(new GridBagLayout());
 
-            // This consists of a JLabel and a JTextField
+            // This consists of a JLabel, a JButton, and a JTextField
 
             // JLabel
             JLabel funcLabel = new JLabel("f(z) = ");
@@ -69,17 +65,26 @@ public class TopWindow extends JFrame {
             funcLabelC.anchor = GridBagConstraints.LINE_START;
             this.add(funcLabel, funcLabelC);
 
-            // JTextField: we will access it later, so we make it an instance
-            //  variable
-            funcField = new JTextField(Integer.MAX_VALUE);
+            // JButton
+            JButton plotButton = new JButton("Plot...");
+            GridBagConstraints plotButtonC = new GridBagConstraints();
+            plotButtonC.gridx = 2;
+            plotButtonC.gridy = 0;
+            plotButtonC.insets = new Insets(10,10,10,10);
+            plotButtonC.anchor = GridBagConstraints.LINE_END;
+            this.add(plotButton, plotButtonC);
+
+            // JTextField
+            JTextField funcField = new JTextField(Integer.MAX_VALUE);
                 // No bound on the columns
             GridBagConstraints funcFieldC = new GridBagConstraints();
             funcFieldC.gridx = 1;
             funcFieldC.gridy = 0;
             funcFieldC.fill = GridBagConstraints.HORIZONTAL;
             funcFieldC.weightx = 1.0;
-            funcFieldC.insets = new Insets(10,0,10,10);
-                // No margin on the left as the label already has it
+            funcFieldC.insets = new Insets(10,0,10,0);
+                // No margin on the left or right as the label and button
+                //  already have it
             this.add(funcField, funcFieldC);
 
         }
@@ -151,16 +156,6 @@ public class TopWindow extends JFrame {
          */
         public class Plot extends JPanel{
 
-            // Private Variables: ----------------------------------------------
-
-            private JTextField imUp;
-            private JTextField imDo;
-            private JTextField reUp;
-            private JTextField reDo;
-
-            private JPanel plot;
-
-
             // Constructors: ---------------------------------------------------
 
             public Plot(){
@@ -169,7 +164,7 @@ public class TopWindow extends JFrame {
                 // We have four JTextFields surrounding a central plot
                 // We make all of them instance variables as we will have to
                 //  access them later.
-                imUp = new JTextField(5);
+                JTextField imUp = new JTextField(5);
                 imUp.setText("15");
                 imUp.setHorizontalAlignment(JTextField.CENTER);
                 GridBagConstraints imUpC = new GridBagConstraints();
@@ -178,7 +173,7 @@ public class TopWindow extends JFrame {
                 imUpC.anchor = GridBagConstraints.PAGE_START;
                 this.add(imUp, imUpC);
 
-                imDo = new JTextField(5);
+                JTextField imDo = new JTextField(5);
                 imDo.setText("-15");
                 imDo.setHorizontalAlignment(JTextField.CENTER);
                 GridBagConstraints imDoC = new GridBagConstraints();
@@ -187,7 +182,7 @@ public class TopWindow extends JFrame {
                 imDoC.anchor = GridBagConstraints.PAGE_END;
                 this.add(imDo, imDoC);
 
-                reUp = new JTextField(5);
+                JTextField reUp = new JTextField(5);
                 reUp.setText("15");
                 reUp.setHorizontalAlignment(JTextField.CENTER);
                 GridBagConstraints reUpC = new GridBagConstraints();
@@ -196,7 +191,7 @@ public class TopWindow extends JFrame {
                 reUpC.anchor = GridBagConstraints.LINE_END;
                 this.add(reUp, reUpC);
 
-                reDo = new JTextField(5);
+                JTextField reDo = new JTextField(5);
                 reDo.setText("-15");
                 reDo.setHorizontalAlignment(JTextField.CENTER);
                 GridBagConstraints reDoC = new GridBagConstraints();
@@ -207,7 +202,7 @@ public class TopWindow extends JFrame {
 
 
                 // TODO: Make the plot area do something
-                plot = new JPanel();
+                JPanel plot = new JPanel();
                 plot.setSize(new Dimension(300,300));
                 plot.setBackground(Color.GRAY);
                 plot.setBorder(BorderFactory.createLineBorder(Color.BLACK));

@@ -45,6 +45,14 @@ public class Complex {
         im = 0.0;
     }
 
+    /**
+     * Default constructor returns 0+0i
+     */
+    public Complex(){
+        re = 0.0;
+        im = 0.0;
+    }
+
 
     // Getters/Setters: --------------------------------------------------------
 
@@ -87,7 +95,7 @@ public class Complex {
         //  https://en.wikipedia.org/wiki/Color_wheel_graphs_of_complex_functions
         double H = (Math.PI + getArg()) % (2*Math.PI);
             // We do mod 2Pi so it is never over it
-        double L = (1 - Math.pow(2.0, -1*getAbs()));
+        double L = (1 - Math.pow(2.0, -1*getAbs())) * .6;
         double S = 1.0;
 
         // Convert to RGB as specified on RapidTables:
@@ -138,5 +146,47 @@ public class Complex {
 
         // R, G, and B are between 0 and 1, so we have to multiply by 255
         return new Color((int) (255*R), (int) (255*G), (int) (255*B));
+    }
+
+    /**
+     * This method takes in a string and returns a complex number the string
+     * represents, or throws a number format exception if it is invalid.
+     *
+     * @throws NumberFormatException When the string does not represent a
+     *                               complex number
+     * @param s The string representing a complex number.
+     * @return The complex number represented by `s`.
+     */
+    public static Complex parseComplex(String s){
+        // If it is a real number: matches a number, followed by an optional
+        //  point, followed by an optional decimal part
+        if(s.matches("[0-9]+\\.?[0-9]*")){
+            // If it matches, we can parse to a double
+            return new Complex(Double.parseDouble(s),0);
+        }
+
+        // If it is an imaginary number: matches a number, followed by an
+        //  optional decimal point, followed by an optional decimal part,
+        //  followed by "i" or "j"
+        if(s.matches("[0-9]+\\.?[0-9]*(i|j)")){
+            // The last part can be converted to a double, so strip the last
+            //  character
+            return new Complex(0, Double.parseDouble(s.substring(0,s.length()-1)));
+        }
+
+        // If it is a complex number: matches a real number, a plus, another
+        //  real number, then "i" or "j"
+        if(s.matches("[0-9]+\\.?[0-9]*\\+[0-9]+\\.?[0-9]*(i|j)")){
+            // Get the real and imaginary parts
+            String real = s.split("\\+")[0];
+            String imag = s.split("\\+")[1];
+            return new Complex(
+                    Double.parseDouble(real),
+                    Double.parseDouble(imag.substring(0,imag.length()-1))
+            );
+        }
+
+        // We didn't find anything
+        throw new NumberFormatException("Failed to parse: " + s);
     }
 }

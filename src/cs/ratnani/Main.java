@@ -11,7 +11,7 @@ import cs.ratnani.ui.TopWindow;
  * @version 0.0
  */
 public class Main {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         TopWindow window = new TopWindow("AP Computer Science A - Final Project");
         window.setVisible(true);
     }
