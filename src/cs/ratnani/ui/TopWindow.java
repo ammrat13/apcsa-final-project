@@ -29,10 +29,11 @@ public class TopWindow extends JFrame {
 
     // Constants: --------------------------------------------------------------
 
-    private final String ABOUT_TEXT_PATH = "src\\about.txt";
+    // TODO: Remember to ship with the `res` directory
+    private final String ABOUT_TEXT_PATH = "res\\about.txt";
     private final String ABOUT_TEXT;
 
-    private final String ERROR_SOUND_FILE_PATH = "src\\error.wav";
+    private final String ERROR_SOUND_FILE_PATH = "res\\error.wav";
 
 
     // Private Variables: ------------------------------------------------------
