@@ -80,6 +80,7 @@ public class ComplexMath {
      * @return Complex conjugate of z
      */
     public static Complex conj(Complex z){
+        // conj(a + bi) == a - bi
         return new Complex(
                 z.getRe(),
                 -1*z.getIm()
@@ -112,8 +113,8 @@ public class ComplexMath {
         // exp(a) * (cos(b) + i*sin(b))
         // exp(a)*cos(b) + (exp(a)*sin(b))i
         return new Complex(
-                Math.exp(z.getRe())*Math.cos(z.getIm()),
-                Math.exp(z.getRe())*Math.sin(z.getIm())
+                Math.exp(z.getRe()) * Math.cos(z.getIm()),
+                Math.exp(z.getRe()) * Math.sin(z.getIm())
         );
     }
 

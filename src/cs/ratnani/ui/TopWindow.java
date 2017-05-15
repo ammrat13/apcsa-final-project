@@ -45,16 +45,14 @@ public class TopWindow extends JFrame {
     private JTextField imUpField;
     private JTextField imDoField;
 
-    // To store the values for each text box
+    // To store the values for each text box, to be set when the user hits
+    //  "Plot"
     private String currentFunc;
-    private boolean funcChanged;
+    private boolean funcOrBoundsChanged;
     private double reUpT;
     private double reDoT;
     private double imUpT;
     private double imDoT;
-
-    // For creating dialogs
-    private final JOptionPane pane = new JOptionPane();
 
     // For when "repaint()" needs to be called on the plot area
     private TriggerList plotList = new TriggerList();
@@ -67,7 +65,7 @@ public class TopWindow extends JFrame {
         super(n);
 
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setSize(700,700);
+        this.setMinimumSize(new Dimension(700,700));
         this.setLayout(new BorderLayout());
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
             // So it starts full-screen
@@ -92,13 +90,13 @@ public class TopWindow extends JFrame {
     }
 
 
-    // Public Classes: ---------------------------------------------------------
+    // Subclasses: -------------------------------------------------------------
 
     /**
      * This class is the function input bar that appears at the top of the
      * window.
      */
-    public class FuncBar extends JPanel{
+    private class FuncBar extends JPanel{
 
 
         // Constructors: -------------------------------------------------------
@@ -117,8 +115,10 @@ public class TopWindow extends JFrame {
             funcLabelC.anchor = GridBagConstraints.LINE_START;
             this.add(funcLabel, funcLabelC);
 
+
             // JButton
             JButton plotButton = new JButton("Plot...");
+            // OnClick
             plotButton.addActionListener(
                     e -> {
                         // Error checking
@@ -136,20 +136,23 @@ public class TopWindow extends JFrame {
                             // If none of those caused an error, we're good to
                             //  go
                             currentFunc = funcField.getText();
-                            funcChanged = true;
+                            funcOrBoundsChanged = true;
                             plotList.trigger();
                         } catch(IllegalArgumentException f){
+                            System.out.println(f.getMessage());
                             // Play a sound
                             new Thread(() -> errorSound()).start();
                         }
                     }
             );
+
             GridBagConstraints plotButtonC = new GridBagConstraints();
             plotButtonC.gridx = 2;
             plotButtonC.gridy = 0;
             plotButtonC.insets = new Insets(10,10,10,10);
             plotButtonC.anchor = GridBagConstraints.LINE_END;
             this.add(plotButton, plotButtonC);
+
 
             // JTextField
             funcField = new JTextField(Integer.MAX_VALUE);
@@ -176,7 +179,6 @@ public class TopWindow extends JFrame {
             try {
                 File soundFile = new File(ERROR_SOUND_FILE_PATH);
                 AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
-                // Get a sound clip resource.
                 Clip clip = AudioSystem.getClip();
                 // Open audio clip and load samples from the audio input stream.
                 clip.open(audioIn);
@@ -190,7 +192,7 @@ public class TopWindow extends JFrame {
     /**
      * This class contains the buttons that appear at the bottom of the page.
      */
-    public class ButtonBar extends JPanel{
+    private class ButtonBar extends JPanel{
 
         // Constructors: -------------------------------------------------------
 
@@ -203,8 +205,9 @@ public class TopWindow extends JFrame {
             JButton export = new JButton("Export...");
             this.add(export);
 
+
             JButton about = new JButton("About...");
-            // ActionListeners for buttons handle clicks
+            // OnClick
             about.addActionListener(
                     e -> JOptionPane.showMessageDialog(null,
                             ABOUT_TEXT,
@@ -212,6 +215,7 @@ public class TopWindow extends JFrame {
                             JOptionPane.PLAIN_MESSAGE
                     )
             );
+
             this.add(about);
         }
 
@@ -222,7 +226,7 @@ public class TopWindow extends JFrame {
      * part. It contains the plot and additional information about the complex
      * number being pointed to. It has subclasses for each of its components.
      */
-    public class MidPanel extends JPanel{
+    private class MidPanel extends JPanel{
 
         // Constructors: -------------------------------------------------------
 
@@ -250,7 +254,7 @@ public class TopWindow extends JFrame {
         /**
          * This class contains the plot of the function inputted.
          */
-        public class Plot extends JPanel{
+        private class Plot extends JPanel{
 
             // Constructors: ---------------------------------------------------
 
@@ -259,7 +263,7 @@ public class TopWindow extends JFrame {
 
                 // We have four JTextFields surrounding a central plot
                 // We make all of them instance variables as we will have to
-                //  access them later.
+                //  access them in the `FuncBar` class.
                 imUpField = new JTextField(5);
                 imUpField.setText("15");
                 imUpField.setHorizontalAlignment(JTextField.CENTER);
@@ -312,7 +316,10 @@ public class TopWindow extends JFrame {
 
             // Subclasses: -----------------------------------------------------
 
-            public class PlotArea extends JPanel implements TriggerListener {
+            /**
+             * The actual area where the plot is displayed
+             */
+            private class PlotArea extends JPanel implements TriggerListener {
 
                 // Constants: --------------------------------------------------
 
@@ -347,7 +354,7 @@ public class TopWindow extends JFrame {
                     this.addMouseMotionListener(new MouseMotionListener() {
                         @Override
                         public void mouseDragged(MouseEvent e) {
-                            // Update lastPointed to what the user clicked on
+                            // Update lastPointed to what the user was on
                             lastPointed = new Complex(
                                     ComplexMath.numAtC(
                                             e.getX(),
@@ -382,14 +389,14 @@ public class TopWindow extends JFrame {
                     if (currentFunc != null) {
                         // Only recompute the image if the function has changed,
                         //  or the window size has
-                        if(funcChanged
+                        if(funcOrBoundsChanged
                                 || this.getWidth() != lastWidth
                                 || this.getHeight() != lastHeight){
                             // Update the width and height
                             lastWidth = this.getWidth();
                             lastHeight = this.getHeight();
 
-                            funcChanged = false;
+                            funcOrBoundsChanged = false;
                             imageReady = false;
 
                             // Draw loading text
@@ -406,7 +413,7 @@ public class TopWindow extends JFrame {
                             }
 
                             // Plot in the background
-                            backgroundPlot = new Thread(new PlotGetter());
+                            backgroundPlot = new Thread(new PlotBackground());
                             backgroundPlot.start();
                         }
 
@@ -451,13 +458,14 @@ public class TopWindow extends JFrame {
                             );
                         }
                     } else {
-                        // Fill it with gray if there is no function
+                        // Fill it with gray if it is our first time
                         g2d.setColor(Color.GRAY);
                         g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
                     }
                 }
 
                 public void onTrigger() {
+                    System.out.println("Triggered");
                     this.repaint();
                 }
 
@@ -465,9 +473,10 @@ public class TopWindow extends JFrame {
                 // Subclasses: -------------------------------------------------
 
                 /**
-                 * Required so that we can get the image in the background
+                 * Runnable that generates the plot in the backgound.
                  */
-                private class PlotGetter implements Runnable {
+                private class PlotBackground implements Runnable{
+                    @Override
                     public void run(){
                         currentImage = ComplexMath.plot(
                                 currentFunc,
@@ -478,7 +487,9 @@ public class TopWindow extends JFrame {
                                 lastWidth,
                                 lastHeight
                         );
+                        // When we are done
                         imageReady = true;
+                        // Call `repaint()`
                         plotList.trigger();
                     }
                 }

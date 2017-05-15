@@ -7,12 +7,19 @@ import java.awt.*;
  * This class represents a complex number. It has a constructor for the re-im
  * representation and has methods to access this number's real part, imaginary
  * part, complex modulus (r), and complex argument (theta). It also has a
- * method to compute the color of this number.
+ * method to compute the color of this number, and to parse it from a String.
  *
+ * @see ComplexMath
  * @author Ammar Ratnani
  * @version 0.0
  */
 public class Complex {
+
+    // Constants: --------------------------------------------------------------
+
+    // Coefficient to specify the maximum value of H in the color
+    private final double C_H = .68;
+
 
     // Instance Variables: -----------------------------------------------------
 
@@ -66,7 +73,7 @@ public class Complex {
     // Public Methods: ---------------------------------------------------------
 
     /** @return The string representation of this number in re-im format to
-     *          three decimal places
+     *          three decimal places (ex. 1.333 - 2.500i)
      */
     public String toString(){
         if(im >= 0)
@@ -92,7 +99,7 @@ public class Complex {
      * @return The color of this number
      */
     public Color getColor(){
-        // If the number is NaN or +/-Infinity, return white
+        // If either part of the number is NaN or +/-Infinity, return white
         if(Double.isNaN(re) || Double.isInfinite(re)
                 || Double.isNaN(im) || Double.isInfinite(im)){
             return Color.WHITE;
@@ -101,8 +108,9 @@ public class Complex {
         // HLS value as specified on Wikipeida:
         //  https://en.wikipedia.org/wiki/Color_wheel_graphs_of_complex_functions
         double H = (Math.PI + getArg()) % (2*Math.PI);
-            // We do mod 2Pi so it is never over it
-        double L = (1 - Math.pow(2.0, -1*getAbs())) * .67;
+            // We do mod 2*pi so H is never over 2*pi
+        double L = (1 - Math.pow(2.0, -1*getAbs())) * C_H;
+            // Coefficient to prevent the color from being too white
         double S = 1.0;
 
         // Convert to RGB as specified on RapidTables:
@@ -170,36 +178,37 @@ public class Complex {
             return new Complex(0,1);
         }
 
-        // If it is a real number: matches a number, followed by an optional
-        //  point, followed by an optional decimal part
+        // If it is a real number: matches an optional negative, then an
+        //  integer, followed by an optional point, followed by an optional
+        //  decimal part
         if(s.matches("\\-?[0-9]+\\.?[0-9]*")){
             // If it matches, we can parse to a double
             return new Complex(Double.parseDouble(s),0);
         }
 
-        // If it is an imaginary number: matches a number, followed by an
-        //  optional decimal point, followed by an optional decimal part,
-        //  followed by "i" or "j"
+        // If it is an imaginary number: matches an optional negative, then an
+        //  integer, followed by an optional decimal point, followed by an
+        //  optional decimal part, followed by "i" or "j"
         if(s.matches("\\-?[0-9]+\\.?[0-9]*(i|j)")){
             // The last part can be converted to a double, so strip the last
-            //  character
+            //  character ("i" or "j")
             return new Complex(0, Double.parseDouble(s.substring(0,s.length()-1)));
         }
 
-        // If it is a complex number: matches a real number, a plus, another
-        //  real number, then "i" or "j"
+        // If it is a complex number: matches a real number, a plus or minus,
+        //  then another real number, then "i" or "j"
         if(s.matches("\\-?[0-9]+\\.?[0-9]*(\\+|\\-)[0-9]\\.?[0-9]*(i|j)")){
             // Get the real and imaginary parts
             String real = s.split("(\\+|\\-)")[0];
             String imag = s.split("(\\+|\\-)")[1];
-            // Change depending on if it was plus or minus
+            // Change depending on if it was plus or minus in the middle
             if(s.contains("+")) {
                 return new Complex(
                         Double.parseDouble(real),
                         Double.parseDouble(imag.substring(0, imag.length() - 1))
                 );
             } else {
-                // if it was minus
+                // If it was minus
                 return new Complex(
                         Double.parseDouble(real),
                         -1 * Double.parseDouble(imag.substring(0, imag.length() - 1))
