@@ -285,7 +285,7 @@ public class ComplexMath {
      * This method will take a postfix function and a specified origin and spit
      * out a plot of the function as a w-by-h image
      *
-     * @param s The function
+     * @param s The function in postfix notation
      * @param reUp The upper bound on the real axis
      * @param reDo The lower bound on the real axis
      * @param imUp The upper bound on the imaginary axis
