@@ -12,7 +12,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Scanner;
 
 
 /**
@@ -27,13 +29,10 @@ public class TopWindow extends JFrame {
 
     // Constants: --------------------------------------------------------------
 
-    private final String ABOUT_TEXT =
-            "apcsa-final-project\n" +
-                    "This is an interactive plotter for complex valued " +
-                    "functions of complex numbers.";
+    private final String ABOUT_TEXT_PATH = "src\\about.txt";
+    private final String ABOUT_TEXT;
 
-    // TODO: Move it somewhere that is NOT my Desktop
-    private final String ERROR_SOUND_FILE_PATH = "C:\\Users\\Ammar Ratnani\\Desktop\\error.wav";
+    private final String ERROR_SOUND_FILE_PATH = "src\\error.wav";
 
 
     // Private Variables: ------------------------------------------------------
@@ -60,6 +59,19 @@ public class TopWindow extends JFrame {
         this.setLayout(new BorderLayout());
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
             // So it starts full-screen
+
+        // Read the about page
+        String abtTmp = "";
+        try {
+            Scanner abtScanner = new Scanner(new File(ABOUT_TEXT_PATH));
+            while(abtScanner.hasNextLine())
+                abtTmp += abtScanner.nextLine() + "\n";
+        } catch(FileNotFoundException e){
+            // Do Nothing
+        } finally {
+            // Assigns to the file contents if it exists, empty string otherwise
+            ABOUT_TEXT = abtTmp;
+        }
 
         // Add all the components
         this.add(new FuncBar(), BorderLayout.PAGE_START);
