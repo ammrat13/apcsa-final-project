@@ -1,7 +1,18 @@
 package cs.ratnani.ui;
 
+import cs.ratnani.math.Complex;
+import cs.ratnani.math.ComplexMath;
+import cs.ratnani.util.TriggerList;
+import cs.ratnani.util.TriggerListener;
+
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 
 /**
@@ -16,11 +27,25 @@ public class TopWindow extends JFrame {
 
     // Constants: --------------------------------------------------------------
 
-    //About text:
     private final String ABOUT_TEXT =
             "apcsa-final-project\n" +
                     "This is an interactive plotter for complex valued " +
                     "functions of complex numbers.";
+
+    private final String ERROR_SOUND_FILE_PATH = "C:\\Users\\Ammar Ratnani\\Desktop\\error.wav";
+
+
+    // Private Variables: ------------------------------------------------------
+
+    // We put these here as their values are needed thorough-out the UI
+    private JTextField funcField;
+    private JTextField reUp;
+    private JTextField reDo;
+    private JTextField imUp;
+    private JTextField imDo;
+
+    // For when the "Plot" button is clicked
+    private TriggerList plotList = new TriggerList();
 
 
     // Constructors: -----------------------------------------------------------
@@ -32,6 +57,8 @@ public class TopWindow extends JFrame {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setSize(700,700);
         this.setLayout(new BorderLayout());
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            // So it starts full-screen
 
         // Add all the components
         this.add(new FuncBar(), BorderLayout.PAGE_START);
@@ -67,6 +94,26 @@ public class TopWindow extends JFrame {
 
             // JButton
             JButton plotButton = new JButton("Plot...");
+            plotButton.addActionListener(
+                    e -> {
+                        // Error checking
+                        try{
+                            // Try to cause an exception
+                            Double.parseDouble(reUp.getText());
+                            Double.parseDouble(reDo.getText());
+                            Double.parseDouble(imUp.getText());
+                            Double.parseDouble(imDo.getText());
+                            ComplexMath.parsePostfix(funcField.getText(),new Complex());
+
+                            // If none of those caused an error, we're good to
+                            //  go
+                            plotList.trigger();
+                        } catch(IllegalArgumentException f){
+                            // Play a sound
+                            new Thread(() -> errorSound()).start();
+                        }
+                    }
+            );
             GridBagConstraints plotButtonC = new GridBagConstraints();
             plotButtonC.gridx = 2;
             plotButtonC.gridy = 0;
@@ -75,7 +122,7 @@ public class TopWindow extends JFrame {
             this.add(plotButton, plotButtonC);
 
             // JTextField
-            JTextField funcField = new JTextField(Integer.MAX_VALUE);
+            funcField = new JTextField(Integer.MAX_VALUE);
                 // No bound on the columns
             GridBagConstraints funcFieldC = new GridBagConstraints();
             funcFieldC.gridx = 1;
@@ -89,6 +136,25 @@ public class TopWindow extends JFrame {
 
         }
 
+
+        // Private Methods: ----------------------------------------------------
+
+        /**
+         * Plays an error sound.
+         */
+        private void errorSound() {
+            try {
+                File soundFile = new File(ERROR_SOUND_FILE_PATH);
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+                // Get a sound clip resource.
+                Clip clip = AudioSystem.getClip();
+                // Open audio clip and load samples from the audio input stream.
+                clip.open(audioIn);
+                clip.start();
+            } catch(IOException | UnsupportedAudioFileException | LineUnavailableException e){
+                // Do nothing
+            }
+        }
     }
 
     /**
@@ -137,11 +203,11 @@ public class TopWindow extends JFrame {
             GridBagConstraints plotC = new GridBagConstraints();
             plotC.gridx = 0;
             plotC.gridy = 0;
-            plotC.gridwidth = 2;
-                // The info boxes each take one column
+            plotC.gridheight = 2;
+                // The info boxes each take one row
             plotC.fill = GridBagConstraints.BOTH;
-            plotC.weighty = .6;
-            plotC.weightx = 1.0;
+            plotC.weighty = 1.0;
+            plotC.weightx = .6;
             plotC.insets = new Insets(10,10,10,10);
             this.add(new Plot(), plotC);
 
@@ -164,7 +230,7 @@ public class TopWindow extends JFrame {
                 // We have four JTextFields surrounding a central plot
                 // We make all of them instance variables as we will have to
                 //  access them later.
-                JTextField imUp = new JTextField(5);
+                imUp = new JTextField(5);
                 imUp.setText("15");
                 imUp.setHorizontalAlignment(JTextField.CENTER);
                 GridBagConstraints imUpC = new GridBagConstraints();
@@ -173,7 +239,7 @@ public class TopWindow extends JFrame {
                 imUpC.anchor = GridBagConstraints.PAGE_START;
                 this.add(imUp, imUpC);
 
-                JTextField imDo = new JTextField(5);
+                imDo = new JTextField(5);
                 imDo.setText("-15");
                 imDo.setHorizontalAlignment(JTextField.CENTER);
                 GridBagConstraints imDoC = new GridBagConstraints();
@@ -182,7 +248,7 @@ public class TopWindow extends JFrame {
                 imDoC.anchor = GridBagConstraints.PAGE_END;
                 this.add(imDo, imDoC);
 
-                JTextField reUp = new JTextField(5);
+                reUp = new JTextField(5);
                 reUp.setText("15");
                 reUp.setHorizontalAlignment(JTextField.CENTER);
                 GridBagConstraints reUpC = new GridBagConstraints();
@@ -191,7 +257,7 @@ public class TopWindow extends JFrame {
                 reUpC.anchor = GridBagConstraints.LINE_END;
                 this.add(reUp, reUpC);
 
-                JTextField reDo = new JTextField(5);
+                reDo = new JTextField(5);
                 reDo.setText("-15");
                 reDo.setHorizontalAlignment(JTextField.CENTER);
                 GridBagConstraints reDoC = new GridBagConstraints();
@@ -201,10 +267,7 @@ public class TopWindow extends JFrame {
                 this.add(reDo, reDoC);
 
 
-                // TODO: Make the plot area do something
-                JPanel plot = new JPanel();
-                plot.setSize(new Dimension(300,300));
-                plot.setBackground(Color.GRAY);
+                JPanel plot = new PlotArea();
                 plot.setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 GridBagConstraints plotC = new GridBagConstraints();
                 plotC.gridx = 1;
@@ -214,6 +277,165 @@ public class TopWindow extends JFrame {
                 plotC.weighty = 1.0;
                 plotC.insets = new Insets(10,10,10,10);
                 this.add(plot, plotC);
+            }
+
+
+            // Subclasses: -----------------------------------------------------
+
+            public class PlotArea extends JPanel implements TriggerListener {
+
+                // Constants: --------------------------------------------------
+
+                private final int CIRCLE_RADIUS = 15;
+
+
+                // Private Variables: ------------------------------------------
+
+                private String currentFunc = null;
+                private boolean funcChanged = false;
+                private BufferedImage currentImage = null;
+
+                // To check if we have resized
+                private int lastWidth;
+                private int lastHeight;
+
+                // To store the values until the user hits "Plot"
+                private double reUpT;
+                private double reDoT;
+                private double imUpT;
+                private double imDoT;
+
+                // Store the last complex number the user clicked on
+                private Complex lastPointed = new Complex(0,0);
+
+
+                // Constructors: -----------------------------------------------
+
+                public PlotArea() {
+                    // We want to know when the function changed
+                    plotList.add(this);
+
+                    lastWidth = this.getWidth();
+                    lastHeight = this.getHeight();
+
+                    this.addMouseMotionListener(new MouseMotionListener() {
+                        @Override
+                        public void mouseDragged(MouseEvent e) {
+                            // Update lastPointed to what the user clicked on
+                            lastPointed = new Complex(
+                                    ComplexMath.numAtC(
+                                            e.getX(),
+                                            lastWidth,
+                                            reUpT,
+                                            reDoT
+                                    ),
+                                    ComplexMath.numAtR(
+                                            e.getY(),
+                                            lastHeight,
+                                            imUpT,
+                                            imDoT
+                                    )
+                            );
+                            repaint();
+                        }
+
+                        @Override
+                        public void mouseMoved(MouseEvent e) { /* Do Nothing */ }
+                    });
+                }
+
+
+                // Public Methods: ---------------------------------------------
+
+                @Override
+                protected void paintComponent(Graphics g) {
+                    Graphics2D g2d = (Graphics2D) g;
+                    super.paintComponent(g2d);
+
+                    // If we have a function
+                    if (currentFunc != null) {
+                        // Only recompute the image if the function has changed,
+                        //  or the window size has
+                        if(funcChanged
+                                || this.getWidth() != lastWidth
+                                || this.getHeight() != lastHeight){
+                            currentImage = ComplexMath.plot(
+                                    currentFunc,
+                                    reUpT,
+                                    reDoT,
+                                    imUpT,
+                                    imDoT,
+                                    this.getWidth(),
+                                    this.getHeight()
+                            );
+
+                            // Update the width and height
+                            lastWidth = this.getWidth();
+                            lastHeight = this.getHeight();
+                            funcChanged = false;
+                        }
+
+                        g2d.drawImage(
+                                currentImage,
+                                0,
+                                0,
+                                null
+                        );
+
+                        // If the user has pointed to a complex number, draw a
+                        //  red circle there and a green circle at the
+                        //  function's value at the number the user pointed to
+                        if(lastPointed != null){
+                            // Compute the r and c of `lastPointed`
+                            int c = ComplexMath.colOf(lastPointed, this.getWidth(), reUpT, reDoT);
+                            int r = ComplexMath.rowOf(lastPointed, this.getHeight(), imUpT, imDoT);
+
+                            // Draw a red circle at `lastPointed`
+                            g.setColor(Color.RED);
+                            g.fillOval(
+                                    c - (CIRCLE_RADIUS/2),
+                                    r - (CIRCLE_RADIUS/2),
+                                    CIRCLE_RADIUS,
+                                    CIRCLE_RADIUS
+                            );
+
+                            // Compute f(`lastPointed`)
+                            Complex res = ComplexMath.parsePostfix(currentFunc,lastPointed);
+
+                            // Compute its r and c
+                            int cf = ComplexMath.colOf(res, this.getWidth(), reUpT, reDoT);
+                            int rf = ComplexMath.rowOf(res, this.getHeight(), imUpT, imDoT);
+
+                            // Draw a green circle at f(`lastPointed`)
+                            g.setColor(Color.GREEN);
+                            g.fillOval(
+                                    cf - (CIRCLE_RADIUS/2),
+                                    rf - (CIRCLE_RADIUS/2),
+                                    CIRCLE_RADIUS,
+                                    CIRCLE_RADIUS
+                            );
+                        }
+                    } else {
+                        // Fill it with gray if there is no function
+                        g2d.setColor(Color.GRAY);
+                        g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
+                    }
+                }
+
+                public void onTrigger() {
+                    // Set the function to the one in the box
+                    currentFunc = funcField.getText();
+                    funcChanged = true;
+
+                    // Update the bounds
+                    reUpT = Double.parseDouble(reUp.getText());
+                    reDoT = Double.parseDouble(reDo.getText());
+                    imUpT = Double.parseDouble(imUp.getText());
+                    imDoT = Double.parseDouble(imDo.getText());
+
+                    this.repaint(); // with the new function
+                }
+
             }
 
         }

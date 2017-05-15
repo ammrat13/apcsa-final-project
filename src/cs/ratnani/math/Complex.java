@@ -87,10 +87,17 @@ public class Complex {
      * <a href="http://www.rapidtables.com/convert/color/hsl-to-rgb.htm">
      *     http://www.rapidtables.com/convert/color/hsl-to-rgb.htm
      * </a>
+     * It will return white if either is `NaN` or +/-Infinity.
      *
      * @return The color of this number
      */
     public Color getColor(){
+        // If the number is NaN or +/-Infinity, return white
+        if(Double.isNaN(re) || Double.isInfinite(re)
+                || Double.isNaN(im) || Double.isInfinite(im)){
+            return Color.WHITE;
+        }
+
         // HLS value as specified on Wikipeida:
         //  https://en.wikipedia.org/wiki/Color_wheel_graphs_of_complex_functions
         double H = (Math.PI + getArg()) % (2*Math.PI);
@@ -160,7 +167,7 @@ public class Complex {
     public static Complex parseComplex(String s){
         // If it is a real number: matches a number, followed by an optional
         //  point, followed by an optional decimal part
-        if(s.matches("[0-9]+\\.?[0-9]*")){
+        if(s.matches("\\-?[0-9]+\\.?[0-9]*")){
             // If it matches, we can parse to a double
             return new Complex(Double.parseDouble(s),0);
         }
@@ -168,7 +175,7 @@ public class Complex {
         // If it is an imaginary number: matches a number, followed by an
         //  optional decimal point, followed by an optional decimal part,
         //  followed by "i" or "j"
-        if(s.matches("[0-9]+\\.?[0-9]*(i|j)")){
+        if(s.matches("\\-?[0-9]+\\.?[0-9]*(i|j)")){
             // The last part can be converted to a double, so strip the last
             //  character
             return new Complex(0, Double.parseDouble(s.substring(0,s.length()-1)));
@@ -176,14 +183,23 @@ public class Complex {
 
         // If it is a complex number: matches a real number, a plus, another
         //  real number, then "i" or "j"
-        if(s.matches("[0-9]+\\.?[0-9]*\\+[0-9]+\\.?[0-9]*(i|j)")){
+        if(s.matches("\\-?[0-9]+\\.?[0-9]*(\\+|\\-)[0-9]\\.?[0-9]*(i|j)")){
             // Get the real and imaginary parts
-            String real = s.split("\\+")[0];
-            String imag = s.split("\\+")[1];
-            return new Complex(
-                    Double.parseDouble(real),
-                    Double.parseDouble(imag.substring(0,imag.length()-1))
-            );
+            String real = s.split("(\\+|\\-)")[0];
+            String imag = s.split("(\\+|\\-)")[1];
+            // Change depending on if it was plus or minus
+            if(s.contains("+")) {
+                return new Complex(
+                        Double.parseDouble(real),
+                        Double.parseDouble(imag.substring(0, imag.length() - 1))
+                );
+            } else {
+                // if it was minus
+                return new Complex(
+                        Double.parseDouble(real),
+                        -1 * Double.parseDouble(imag.substring(0, imag.length() - 1))
+                );
+            }
         }
 
         // We didn't find anything

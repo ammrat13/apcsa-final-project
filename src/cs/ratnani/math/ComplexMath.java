@@ -162,6 +162,7 @@ public class ComplexMath {
      * This method will take a string in postfix notation and compute it for
      * the complex number supplied.
      *
+     * @throws IllegalArgumentException When the string is not valid postfix
      * @param s The operations in postfix. Use `z` to represent the complex
      *          number supplied
      * @param z The complex number to use in `s`
@@ -277,8 +278,8 @@ public class ComplexMath {
             for(int c = 0; c < w; c++){
                 // Calculate the complex number associated with that pixel
                 Complex in = new Complex(
-                        (((reUp-reDo) * c) / (double)w) + reDo,
-                        (((imDo-imUp) * r) / (double)h) + imUp
+                        numAtC(c,w,reUp,reDo),
+                        numAtR(r,h,imUp,imDo)
                 );
                 // Set the color to the function's value at that point
                 ret.setRGB(c, r, parsePostfix(s, in).getColor().getRGB());
@@ -286,6 +287,64 @@ public class ComplexMath {
         }
 
         return ret;
+    }
+
+    /**
+     * This function will, given a column and the range of the plot, output the
+     * real part of the complex number at that column
+     *
+     * @param c The column to compute for
+     * @param w The width of the plot
+     * @param reUp The upper bound on the real axis
+     * @param reDo The lower bound on the real axis
+     * @return The real part of the numbers at column `c`
+     */
+    public static double numAtC(int c, int w, double reUp, double reDo){
+        return (((reUp-reDo) * c) / w) + reDo;
+    }
+
+    /**
+     * This function will, given a row and the range of the plot, output the
+     * imaginary part of the complex number at that row
+     *
+     * @param r The row to compute for
+     * @param h The height of the plot
+     * @param imUp The upper bound on the imaginary axis
+     * @param imDo The lower bound on the imaginary axis
+     * @return The imaginary part of the numbers at row `r`
+     */
+    public static double numAtR(int r, int h, double imUp, double imDo){
+        return (((imDo-imUp) * r) / h) + imUp;
+    }
+
+    /**
+     * This function will, given a complex number and the plot range, output
+     * the column the number is on
+     *
+     * @param z The complex number to compute the row for
+     * @param w The width of the plot
+     * @param reUp The upper bound on the real axis
+     * @param reDo The lower bound on the real axis
+     * @return The column on which `z` is
+     */
+    public static int colOf(Complex z, int w, double reUp, double reDo){
+        // Inverse of `numAtC()`
+        return (int)( w * (z.getRe() - reDo) / (reUp - reDo) );
+    }
+
+    /**
+     * This function will, given a complex number and the plot range, output
+     * the row the number is on
+     *
+     * @param z The complex number to compute the row for
+     * @param h The height of the plot
+     * @param imUp The upper bound on the imaginary axis
+     * @param imDo The lower bound on the imaginary axis
+     * @return The row on which `z` is
+     */
+    public static int rowOf(Complex z, int h, double imUp, double imDo){
+        // Inverse of `numAtR()`
+        return (int)( h * (z.getIm() - imUp) / (imDo - imUp) );
     }
 
 }
