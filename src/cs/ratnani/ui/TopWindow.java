@@ -5,16 +5,11 @@ import cs.ratnani.math.ComplexMath;
 import cs.ratnani.util.TriggerList;
 import cs.ratnani.util.TriggerListener;
 
-import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Scanner;
 
 
 /**
@@ -33,7 +28,7 @@ public class TopWindow extends JFrame {
     private final String ABOUT_TEXT_PATH = "res\\about.txt";
     private final String ABOUT_TEXT;
 
-    private final String ERROR_SOUND_FILE_PATH = "res\\error.wav";
+    private final String ERROR_SOUND_PATH = "res\\error.wav";
 
 
     // Private Variables: ------------------------------------------------------
@@ -71,17 +66,7 @@ public class TopWindow extends JFrame {
             // So it starts full-screen
 
         // Read the about page
-        String abtTmp = "";
-        try {
-            Scanner abtScanner = new Scanner(new File(ABOUT_TEXT_PATH));
-            while(abtScanner.hasNextLine())
-                abtTmp += abtScanner.nextLine() + "\n";
-        } catch(FileNotFoundException e){
-            // Do Nothing
-        } finally {
-            // Assigns to the file contents if it exists, empty string otherwise
-            ABOUT_TEXT = abtTmp;
-        }
+        ABOUT_TEXT = UIHelper.readFile(ABOUT_TEXT_PATH);
 
         // Add all the components
         this.add(new FuncBar(), BorderLayout.PAGE_START);
@@ -130,7 +115,7 @@ public class TopWindow extends JFrame {
                             imUpT = Double.parseDouble(imUpField.getText());
                             imDoT = Double.parseDouble(imDoField.getText());
 
-                            // Check if function is valid
+                            // Check if function is valid by testing a point
                             ComplexMath.parsePostfix(funcField.getText(),new Complex());
 
                             // If none of those caused an error, we're good to
@@ -139,9 +124,9 @@ public class TopWindow extends JFrame {
                             funcOrBoundsChanged = true;
                             plotList.trigger();
                         } catch(IllegalArgumentException f){
-                            System.out.println(f.getMessage());
+                            f.printStackTrace();
                             // Play a sound
-                            new Thread(() -> errorSound()).start();
+                            UIHelper.playSoundNonBlocking(ERROR_SOUND_PATH);
                         }
                     }
             );
@@ -169,24 +154,6 @@ public class TopWindow extends JFrame {
 
         }
 
-
-        // Private Methods: ----------------------------------------------------
-
-        /**
-         * Plays an error sound.
-         */
-        private void errorSound() {
-            try {
-                File soundFile = new File(ERROR_SOUND_FILE_PATH);
-                AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
-                Clip clip = AudioSystem.getClip();
-                // Open audio clip and load samples from the audio input stream.
-                clip.open(audioIn);
-                clip.start();
-            } catch(IOException | UnsupportedAudioFileException | LineUnavailableException e){
-                // Do nothing
-            }
-        }
     }
 
     /**
@@ -407,15 +374,28 @@ public class TopWindow extends JFrame {
                             );
 
                             // If we are already plotting something, stop
-                            if(backgroundPlot != null && backgroundPlot.isAlive()){
+                            if(backgroundPlot != null && backgroundPlot.isAlive())
                                 // Yes, `stop()` is deprecated, but I don't care
                                 backgroundPlot.stop();
-                            }
 
                             // Plot in the background
-                            backgroundPlot = new Thread(new PlotBackground());
+                            backgroundPlot = new Thread(() -> {
+                                currentImage = ComplexMath.plot(
+                                        currentFunc,
+                                        reUpT,
+                                        reDoT,
+                                        imUpT,
+                                        imDoT,
+                                        lastWidth,
+                                        lastHeight
+                                );
+                                // When we are done, the image is ready, and
+                                //  call `repaint()`
+                                imageReady = true;
+                                plotList.trigger();
+                            });
                             backgroundPlot.start();
-                        }
+                        } // ENDIF: funcOrBoundsChanged
 
                         if(imageReady) {
                             g2d.drawImage(
@@ -433,8 +413,8 @@ public class TopWindow extends JFrame {
                             int r = ComplexMath.rowOf(lastPointed, this.getHeight(), imUpT, imDoT);
 
                             // Draw a red circle at `lastPointed`
-                            g.setColor(Color.RED);
-                            g.fillOval(
+                            g2d.setColor(Color.RED);
+                            g2d.fillOval(
                                     c - (CIRCLE_RADIUS/2),
                                     r - (CIRCLE_RADIUS/2),
                                     CIRCLE_RADIUS,
@@ -449,14 +429,14 @@ public class TopWindow extends JFrame {
                             int rf = ComplexMath.rowOf(res, this.getHeight(), imUpT, imDoT);
 
                             // Draw a green circle at f(`lastPointed`)
-                            g.setColor(Color.GREEN);
-                            g.fillOval(
+                            g2d.setColor(Color.GREEN);
+                            g2d.fillOval(
                                     cf - (CIRCLE_RADIUS/2),
                                     rf - (CIRCLE_RADIUS/2),
                                     CIRCLE_RADIUS,
                                     CIRCLE_RADIUS
                             );
-                        }
+                        } // ENDIF: imageReady
                     } else {
                         // Fill it with gray if it is our first time
                         g2d.setColor(Color.GRAY);
@@ -465,7 +445,6 @@ public class TopWindow extends JFrame {
                 }
 
                 public void onTrigger() {
-                    System.out.println("Triggered");
                     this.repaint();
                 }
 
