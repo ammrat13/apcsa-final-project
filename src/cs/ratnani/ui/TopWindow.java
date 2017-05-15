@@ -223,6 +223,12 @@ public class TopWindow extends JFrame {
          */
         private class Plot extends JPanel{
 
+            // Private Variables: ----------------------------------------------
+
+            // Store the last complex number the user clicked on
+            private Complex lastPointed = new Complex();
+
+
             // Constructors: ---------------------------------------------------
 
             public Plot(){
@@ -301,9 +307,6 @@ public class TopWindow extends JFrame {
                 // To check if we have resized
                 private int lastWidth;
                 private int lastHeight;
-
-                // Store the last complex number the user clicked on
-                private Complex lastPointed = new Complex();
 
                 // Thread to plot in the background
                 Thread backgroundPlot;
