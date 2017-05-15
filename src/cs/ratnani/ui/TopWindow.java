@@ -40,12 +40,23 @@ public class TopWindow extends JFrame {
 
     // We put these here as their values are needed thorough-out the UI
     private JTextField funcField;
-    private JTextField reUp;
-    private JTextField reDo;
-    private JTextField imUp;
-    private JTextField imDo;
+    private JTextField reUpField;
+    private JTextField reDoField;
+    private JTextField imUpField;
+    private JTextField imDoField;
 
-    // For when the "Plot" button is clicked
+    // To store the values for each text box
+    private String currentFunc;
+    private boolean funcChanged;
+    private double reUpT;
+    private double reDoT;
+    private double imUpT;
+    private double imDoT;
+
+    // For creating dialogs
+    private final JOptionPane pane = new JOptionPane();
+
+    // For when "repaint()" needs to be called on the plot area
     private TriggerList plotList = new TriggerList();
 
 
@@ -113,14 +124,19 @@ public class TopWindow extends JFrame {
                         // Error checking
                         try{
                             // Try to cause an exception
-                            Double.parseDouble(reUp.getText());
-                            Double.parseDouble(reDo.getText());
-                            Double.parseDouble(imUp.getText());
-                            Double.parseDouble(imDo.getText());
+                            // Update the bounds only when the user clicks
+                            reUpT = Double.parseDouble(reUpField.getText());
+                            reDoT = Double.parseDouble(reDoField.getText());
+                            imUpT = Double.parseDouble(imUpField.getText());
+                            imDoT = Double.parseDouble(imDoField.getText());
+
+                            // Check if function is valid
                             ComplexMath.parsePostfix(funcField.getText(),new Complex());
 
                             // If none of those caused an error, we're good to
                             //  go
+                            currentFunc = funcField.getText();
+                            funcChanged = true;
                             plotList.trigger();
                         } catch(IllegalArgumentException f){
                             // Play a sound
@@ -244,41 +260,41 @@ public class TopWindow extends JFrame {
                 // We have four JTextFields surrounding a central plot
                 // We make all of them instance variables as we will have to
                 //  access them later.
-                imUp = new JTextField(5);
-                imUp.setText("15");
-                imUp.setHorizontalAlignment(JTextField.CENTER);
+                imUpField = new JTextField(5);
+                imUpField.setText("15");
+                imUpField.setHorizontalAlignment(JTextField.CENTER);
                 GridBagConstraints imUpC = new GridBagConstraints();
                 imUpC.gridx = 1;
                 imUpC.gridy = 0;
                 imUpC.anchor = GridBagConstraints.PAGE_START;
-                this.add(imUp, imUpC);
+                this.add(imUpField, imUpC);
 
-                imDo = new JTextField(5);
-                imDo.setText("-15");
-                imDo.setHorizontalAlignment(JTextField.CENTER);
+                imDoField = new JTextField(5);
+                imDoField.setText("-15");
+                imDoField.setHorizontalAlignment(JTextField.CENTER);
                 GridBagConstraints imDoC = new GridBagConstraints();
                 imDoC.gridx = 1;
                 imDoC.gridy = 2;
                 imDoC.anchor = GridBagConstraints.PAGE_END;
-                this.add(imDo, imDoC);
+                this.add(imDoField, imDoC);
 
-                reUp = new JTextField(5);
-                reUp.setText("15");
-                reUp.setHorizontalAlignment(JTextField.CENTER);
+                reUpField = new JTextField(5);
+                reUpField.setText("15");
+                reUpField.setHorizontalAlignment(JTextField.CENTER);
                 GridBagConstraints reUpC = new GridBagConstraints();
                 reUpC.gridx = 2;
                 reUpC.gridy = 1;
                 reUpC.anchor = GridBagConstraints.LINE_END;
-                this.add(reUp, reUpC);
+                this.add(reUpField, reUpC);
 
-                reDo = new JTextField(5);
-                reDo.setText("-15");
-                reDo.setHorizontalAlignment(JTextField.CENTER);
+                reDoField = new JTextField(5);
+                reDoField.setText("-15");
+                reDoField.setHorizontalAlignment(JTextField.CENTER);
                 GridBagConstraints reDoC = new GridBagConstraints();
                 reDoC.gridx = 0;
                 reDoC.gridy = 1;
                 reDoC.anchor = GridBagConstraints.LINE_START;
-                this.add(reDo, reDoC);
+                this.add(reDoField, reDoC);
 
 
                 JPanel plot = new PlotArea();
@@ -300,27 +316,23 @@ public class TopWindow extends JFrame {
 
                 // Constants: --------------------------------------------------
 
-                private final int CIRCLE_RADIUS = 15;
+                private final int CIRCLE_RADIUS = 10;
 
 
                 // Private Variables: ------------------------------------------
 
-                private String currentFunc = null;
-                private boolean funcChanged = false;
                 private BufferedImage currentImage = null;
+                private boolean imageReady = false;
 
                 // To check if we have resized
                 private int lastWidth;
                 private int lastHeight;
 
-                // To store the values until the user hits "Plot"
-                private double reUpT;
-                private double reDoT;
-                private double imUpT;
-                private double imDoT;
-
                 // Store the last complex number the user clicked on
-                private Complex lastPointed = new Complex(0,0);
+                private Complex lastPointed = new Complex();
+
+                // Thread to plot in the background
+                Thread backgroundPlot;
 
 
                 // Constructors: -----------------------------------------------
@@ -366,40 +378,49 @@ public class TopWindow extends JFrame {
                     Graphics2D g2d = (Graphics2D) g;
                     super.paintComponent(g2d);
 
-                    // If we have a function
+                    // If its not our first time
                     if (currentFunc != null) {
                         // Only recompute the image if the function has changed,
                         //  or the window size has
                         if(funcChanged
                                 || this.getWidth() != lastWidth
                                 || this.getHeight() != lastHeight){
-                            currentImage = ComplexMath.plot(
-                                    currentFunc,
-                                    reUpT,
-                                    reDoT,
-                                    imUpT,
-                                    imDoT,
-                                    this.getWidth(),
-                                    this.getHeight()
-                            );
-
                             // Update the width and height
                             lastWidth = this.getWidth();
                             lastHeight = this.getHeight();
+
                             funcChanged = false;
+                            imageReady = false;
+
+                            // Draw loading text
+                            g2d.drawString(
+                                    "Loading...",
+                                    this.getWidth() / 2,
+                                    this.getHeight() / 2
+                            );
+
+                            // If we are already plotting something, stop
+                            if(backgroundPlot != null && backgroundPlot.isAlive()){
+                                // Yes, `stop()` is deprecated, but I don't care
+                                backgroundPlot.stop();
+                            }
+
+                            // Plot in the background
+                            backgroundPlot = new Thread(new PlotGetter());
+                            backgroundPlot.start();
                         }
 
-                        g2d.drawImage(
-                                currentImage,
-                                0,
-                                0,
-                                null
-                        );
+                        if(imageReady) {
+                            g2d.drawImage(
+                                    currentImage,
+                                    0,
+                                    0,
+                                    null
+                            );
 
-                        // If the user has pointed to a complex number, draw a
-                        //  red circle there and a green circle at the
-                        //  function's value at the number the user pointed to
-                        if(lastPointed != null){
+                            // If the user has pointed to a complex number, draw a
+                            //  red circle there and a green circle at the
+                            //  function's value at the number the user pointed to1
                             // Compute the r and c of `lastPointed`
                             int c = ComplexMath.colOf(lastPointed, this.getWidth(), reUpT, reDoT);
                             int r = ComplexMath.rowOf(lastPointed, this.getHeight(), imUpT, imDoT);
@@ -437,17 +458,29 @@ public class TopWindow extends JFrame {
                 }
 
                 public void onTrigger() {
-                    // Set the function to the one in the box
-                    currentFunc = funcField.getText();
-                    funcChanged = true;
+                    this.repaint();
+                }
 
-                    // Update the bounds
-                    reUpT = Double.parseDouble(reUp.getText());
-                    reDoT = Double.parseDouble(reDo.getText());
-                    imUpT = Double.parseDouble(imUp.getText());
-                    imDoT = Double.parseDouble(imDo.getText());
 
-                    this.repaint(); // with the new function
+                // Subclasses: -------------------------------------------------
+
+                /**
+                 * Required so that we can get the image in the background
+                 */
+                private class PlotGetter implements Runnable {
+                    public void run(){
+                        currentImage = ComplexMath.plot(
+                                currentFunc,
+                                reUpT,
+                                reDoT,
+                                imUpT,
+                                imDoT,
+                                lastWidth,
+                                lastHeight
+                        );
+                        imageReady = true;
+                        plotList.trigger();
+                    }
                 }
 
             }

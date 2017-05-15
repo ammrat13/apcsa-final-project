@@ -102,7 +102,7 @@ public class Complex {
         //  https://en.wikipedia.org/wiki/Color_wheel_graphs_of_complex_functions
         double H = (Math.PI + getArg()) % (2*Math.PI);
             // We do mod 2Pi so it is never over it
-        double L = (1 - Math.pow(2.0, -1*getAbs())) * .6;
+        double L = (1 - Math.pow(2.0, -1*getAbs())) * .67;
         double S = 1.0;
 
         // Convert to RGB as specified on RapidTables:
@@ -165,6 +165,11 @@ public class Complex {
      * @return The complex number represented by `s`.
      */
     public static Complex parseComplex(String s){
+        // Only case not handled below: "i"
+        if(s.equals("i")){
+            return new Complex(0,1);
+        }
+
         // If it is a real number: matches a number, followed by an optional
         //  point, followed by an optional decimal part
         if(s.matches("\\-?[0-9]+\\.?[0-9]*")){

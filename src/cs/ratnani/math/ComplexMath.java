@@ -159,6 +159,23 @@ public class ComplexMath {
     }
 
     /**
+     * Returns the principal value of a^b. In the complex, the results can be
+     * multi-valued (except for integers), each separated by 2*pi*k on either
+     * the real or the imaginary axis for any integer k. The principal value is
+     * the one where k=0.
+     *
+     * @param a A complex number
+     * @param b A complex number
+     * @return The principal value of a^b.
+     */
+    public static Complex pow(Complex a, Complex b){
+        // a^b
+        // exp(ln(a))^b
+        // exp(ln(a) * b) <-- Principal value only
+        return exp( mul(ln(a), b) );
+    }
+
+    /**
      * This method will take a string in postfix notation and compute it for
      * the complex number supplied.
      *
@@ -212,6 +229,12 @@ public class ComplexMath {
                             Complex arg2 = vals.pop();
                             Complex arg1 = vals.pop();
                             vals.push(div(arg1, arg2));
+                            break;
+                        }
+                        case "^": {
+                            Complex arg2 = vals.pop();
+                            Complex arg1 = vals.pop();
+                            vals.push(pow(arg1, arg2));
                             break;
                         }
                         case "conj": {
