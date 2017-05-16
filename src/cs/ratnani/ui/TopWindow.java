@@ -182,7 +182,6 @@ public class TopWindow extends JFrame {
             //  right
             this.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10));
 
-            // TODO: Add export functionality
             JButton export = new JButton("Export...");
             export.addActionListener(
                     e -> {
