@@ -69,7 +69,7 @@ public class TopWindow extends JFrame {
         super(n);
 
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setMinimumSize(new Dimension(700,700));
+        this.setMinimumSize(new Dimension(1000,600));
         this.setLayout(new BorderLayout());
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
             // So it starts full-screen
@@ -550,6 +550,16 @@ public class TopWindow extends JFrame {
                 // Placeholder
                 this.add(new JPanel());
 
+                // Set the label size so they don't resize
+                re.setMinimumSize(new Dimension(100,-1));
+                re.setPreferredSize(new Dimension(100,-1));
+                im.setMinimumSize(new Dimension(100,-1));
+                im.setPreferredSize(new Dimension(100,-1));
+                abs.setMinimumSize(new Dimension(100,-1));
+                abs.setPreferredSize(new Dimension(100,-1));
+                arg.setMinimumSize(new Dimension(100,-1));
+                arg.setPreferredSize(new Dimension(100,-1));
+
                 // Add info labels
                 this.add(re);
                 this.add(abs);
@@ -564,11 +574,11 @@ public class TopWindow extends JFrame {
             // Public Methods: -------------------------------------------------
 
             public void onTrigger(){
-                // Update the text on each of the parts
-                re.setText(String.format("Re(z) = %.3f", lastPointed.getRe()));
-                im.setText(String.format("Im(z) = %.3f", lastPointed.getIm()));
-                abs.setText(String.format("|z| = %.3f", lastPointed.getAbs()));
-                arg.setText(String.format("arg(z) = %.3f", lastPointed.getArg()));
+                // Update the text on each of the parts to at most ten digits
+                re.setText(String.format("Re(z) = %10.3f", lastPointed.getRe()));
+                im.setText(String.format("Im(z) = %10.3f", lastPointed.getIm()));
+                abs.setText(String.format("|z| = %10.3f", lastPointed.getAbs()));
+                arg.setText(String.format("arg(z) = %10.3f", lastPointed.getArg()));
             }
 
         }
@@ -608,6 +618,16 @@ public class TopWindow extends JFrame {
                 // Placeholder
                 this.add(new JPanel());
 
+                // Set the label size so they don't resize
+                re.setMinimumSize(new Dimension(100,-1));
+                re.setPreferredSize(new Dimension(100,-1));
+                im.setMinimumSize(new Dimension(100,-1));
+                im.setPreferredSize(new Dimension(100,-1));
+                abs.setMinimumSize(new Dimension(100,-1));
+                abs.setPreferredSize(new Dimension(100,-1));
+                arg.setMinimumSize(new Dimension(100,-1));
+                arg.setPreferredSize(new Dimension(100,-1));
+
                 // Add info labels
                 this.add(re);
                 this.add(abs);
@@ -625,11 +645,11 @@ public class TopWindow extends JFrame {
                 // Calculate the result
                 Complex res = ComplexMath.parsePostfix(currentFunc,lastPointed);
 
-                // Update the text on each of the parts
-                re.setText(String.format("Re(z) = %.3f", res.getRe()));
-                im.setText(String.format("Im(z) = %.3f", res.getIm()));
-                abs.setText(String.format("|z| = %.3f", res.getAbs()));
-                arg.setText(String.format("arg(z) = %.3f", res.getArg()));
+                // Update the text on each of the parts to ten digits max
+                re.setText(String.format("Re(z) = %10.3f", res.getRe()));
+                im.setText(String.format("Im(z) = %10.3f", res.getIm()));
+                abs.setText(String.format("|z| = %10.3f", res.getAbs()));
+                arg.setText(String.format("arg(z) = %10.3f", res.getArg()));
             }
 
         }
