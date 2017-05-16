@@ -10,6 +10,8 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 
 /**
@@ -25,10 +27,11 @@ public class TopWindow extends JFrame {
     // Constants: --------------------------------------------------------------
 
     // TODO: Remember to ship with the `res` directory
-    private final String ABOUT_TEXT_PATH = "res\\about.txt";
+    private static final String ABOUT_TEXT_PATH = "res\\about.txt";
     private final String ABOUT_TEXT;
 
-    private final String ERROR_SOUND_PATH = "res\\error.wav";
+    // For `UIHelper`
+    public static final String ERROR_SOUND_PATH = "res\\error.wav";
 
 
     // Private Variables: ------------------------------------------------------
@@ -75,6 +78,29 @@ public class TopWindow extends JFrame {
     }
 
 
+    // Private Methods: --------------------------------------------------------
+
+    /**
+     * Updates the bounds and current function if it is valid.
+     *
+     * @throws IllegalArgumentException If the bounds or function is invalid
+     */
+    private void updateBoundsAndFunction() throws IllegalArgumentException{
+        // Check if function is valid by testing a point
+        ComplexMath.parsePostfix(funcField.getText(),new Complex());
+        // Try to cause an exception
+        reUpT = Double.parseDouble(reUpField.getText());
+        reDoT = Double.parseDouble(reDoField.getText());
+        imUpT = Double.parseDouble(imUpField.getText());
+        imDoT = Double.parseDouble(imDoField.getText());
+
+        // If none of those caused an error, we're good to
+        //  go
+        currentFunc = funcField.getText();
+        funcOrBoundsChanged = true;
+    }
+
+
     // Subclasses: -------------------------------------------------------------
 
     /**
@@ -108,20 +134,8 @@ public class TopWindow extends JFrame {
                     e -> {
                         // Error checking
                         try{
-                            // Try to cause an exception
-                            // Update the bounds only when the user clicks
-                            reUpT = Double.parseDouble(reUpField.getText());
-                            reDoT = Double.parseDouble(reDoField.getText());
-                            imUpT = Double.parseDouble(imUpField.getText());
-                            imDoT = Double.parseDouble(imDoField.getText());
-
-                            // Check if function is valid by testing a point
-                            ComplexMath.parsePostfix(funcField.getText(),new Complex());
-
-                            // If none of those caused an error, we're good to
-                            //  go
-                            currentFunc = funcField.getText();
-                            funcOrBoundsChanged = true;
+                            updateBoundsAndFunction();
+                            // If it worked
                             plotList.trigger();
                         } catch(IllegalArgumentException f){
                             f.printStackTrace();
@@ -170,6 +184,37 @@ public class TopWindow extends JFrame {
 
             // TODO: Add export functionality
             JButton export = new JButton("Export...");
+            export.addActionListener(
+                    e -> {
+                        try {
+                            updateBoundsAndFunction();
+
+                            // Get file from user
+                            JFileChooser fileChooser = new JFileChooser();
+                            int res = fileChooser.showSaveDialog(null);
+                            if(res == JFileChooser.APPROVE_OPTION){
+                                File out = fileChooser.getSelectedFile();
+                                UIHelper.writePlotTo(
+                                        out,
+                                        currentFunc,
+                                        reUpT,
+                                        reDoT,
+                                        imUpT,
+                                        imDoT
+                                );
+                                // It will re-plot anyway when we have to call
+                                //  `repaint()`, may as well do it now
+                                plotList.trigger();
+                            } else {
+                                throw new IOException();
+                            }
+                        } catch(IllegalArgumentException | IOException f){
+                            f.printStackTrace();
+                            // Error sound
+                            UIHelper.playSoundNonBlocking(ERROR_SOUND_PATH);
+                        }
+                    }
+            );
             this.add(export);
 
 

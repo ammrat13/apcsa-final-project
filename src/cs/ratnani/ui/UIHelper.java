@@ -1,5 +1,8 @@
 package cs.ratnani.ui;
 
+import cs.ratnani.math.ComplexMath;
+
+import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +16,14 @@ import java.util.Scanner;
  * @version 0.0
  */
 public class UIHelper {
+
+    // Constants: --------------------------------------------------------------
+
+    // For the images we save
+    private static final int EXPORT_HEIGHT = 2048;
+
+
+    // Public Methods: ---------------------------------------------------------
 
     /**
      * Read a file and return its contents.
@@ -57,4 +68,46 @@ public class UIHelper {
             }
         }).start();
     }
+
+    /**
+     * Writes a plot to a passed file object, or overwrites if it exists, as a
+     * "png".
+     *
+     * @param F The file to write
+     * @param f The function to plot
+     * @param reUp The upper bound on the real axis
+     * @param reDo The lower bound on the real axis
+     * @param imUp The upper bound on the imaginary axis
+     * @param imDo The lower bound on the imaginary axis
+     */
+    public static void writePlotTo(File F, String f, double reUp, double reDo,
+                                   double imUp, double imDo){
+        int exportWidth = (int) (EXPORT_HEIGHT * (reUp-reDo) / (imUp - imDo));
+            // Scale `exportWidth` so it matches the aspect ratio of the bounds
+
+        // Non-blocking
+        new Thread(
+                () -> {
+                    try {
+                        ImageIO.write(
+                                ComplexMath.plot(
+                                        f,
+                                        reUp,
+                                        reDo,
+                                        imUp,
+                                        imDo,
+                                        exportWidth,
+                                        EXPORT_HEIGHT
+                                ),
+                                "png",
+                                F
+                        );
+                    } catch (IOException e){
+                        e.printStackTrace();
+                        playSoundNonBlocking(TopWindow.ERROR_SOUND_PATH);
+                    }
+                }
+        ).start();
+    }
+
 }
