@@ -52,8 +52,14 @@ public class TopWindow extends JFrame {
     private double imUpT;
     private double imDoT;
 
+    // Store the last complex number the user clicked on
+    private Complex lastPointed = new Complex();
+
     // For when "repaint()" needs to be called on the plot area
     private TriggerList plotList = new TriggerList();
+
+    // For when the user points to a new number
+    private TriggerList pointList = new TriggerList();
 
 
     // Constructors: -----------------------------------------------------------
@@ -256,22 +262,34 @@ public class TopWindow extends JFrame {
             plotC.insets = new Insets(10,10,10,10);
             this.add(new Plot(), plotC);
 
-            // TODO: Add Info Boxes
+            // Input info box
+            GridBagConstraints inpC = new GridBagConstraints();
+            inpC.gridx = 1;
+            inpC.gridy = 0;
+            inpC.fill = GridBagConstraints.BOTH;
+            inpC.weighty = .5;
+            inpC.weightx = .4;
+            inpC.insets = new Insets(10,10,10,10);
+            this.add(new InputInfoBox(), inpC);
+
+            // Output info box
+            GridBagConstraints outC = new GridBagConstraints();
+            outC.gridx = 1;
+            outC.gridy = 1;
+            outC.fill = GridBagConstraints.BOTH;
+            outC.weighty = .5;
+            outC.weightx = .4;
+            outC.insets = new Insets(10,10,10,10);
+            this.add(new OutputInfoBox(), outC);
         }
 
 
-        // Public classes: -----------------------------------------------------
+        // Subclasses: ---------------------------------------------------------
 
         /**
          * This class contains the plot of the function inputted.
          */
         private class Plot extends JPanel{
-
-            // Private Variables: ----------------------------------------------
-
-            // Store the last complex number the user clicked on
-            private Complex lastPointed = new Complex();
-
 
             // Constructors: ---------------------------------------------------
 
@@ -383,6 +401,7 @@ public class TopWindow extends JFrame {
                                             imDoT
                                     )
                             );
+                            pointList.trigger();
                             repaint();
                         }
 
@@ -495,31 +514,122 @@ public class TopWindow extends JFrame {
                     this.repaint();
                 }
 
+            }
 
-                // Subclasses: -------------------------------------------------
+        }
 
-                /**
-                 * Runnable that generates the plot in the backgound.
-                 */
-                private class PlotBackground implements Runnable{
-                    @Override
-                    public void run(){
-                        currentImage = ComplexMath.plot(
-                                currentFunc,
-                                reUpT,
-                                reDoT,
-                                imUpT,
-                                imDoT,
-                                lastWidth,
-                                lastHeight
-                        );
-                        // When we are done
-                        imageReady = true;
-                        // Call `repaint()`
-                        plotList.trigger();
-                    }
-                }
+        /**
+         * This class contains the two boxes that have information on the input
+         * of the function the user is plotting.
+         */
+        private class InputInfoBox extends JPanel implements TriggerListener{
 
+            // Private Variables: ----------------------------------------------
+
+            // We will need these later
+            JLabel re = new JLabel("Re(z) = ");
+            JLabel im = new JLabel("Im(z) = ");
+            JLabel abs = new JLabel("|z| = ");
+            JLabel arg = new JLabel("arg(z) = ");
+
+
+            // Constructors: ---------------------------------------------------
+
+            public InputInfoBox(){
+                this.setLayout(new GridLayout(3,2,10,10));
+                // Use compound border to get line and margins
+                this.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(Color.BLACK),
+                        BorderFactory.createEmptyBorder(10,10,10,10)
+                ));
+
+                // Title label and labels for re, im, r, and theta
+                // Title
+                this.add(new JLabel("Input:"));
+
+                // Placeholder
+                this.add(new JPanel());
+
+                // Add info labels
+                this.add(re);
+                this.add(abs);
+                this.add(im);
+                this.add(arg);
+
+                // We want to know when the user points to a new point
+                pointList.add(this);
+            }
+
+
+            // Public Methods: -------------------------------------------------
+
+            public void onTrigger(){
+                // Update the text on each of the parts
+                re.setText(String.format("Re(z) = %.3f", lastPointed.getRe()));
+                im.setText(String.format("Im(z) = %.3f", lastPointed.getIm()));
+                abs.setText(String.format("|z| = %.3f", lastPointed.getAbs()));
+                arg.setText(String.format("arg(z) = %.3f", lastPointed.getArg()));
+            }
+
+        }
+
+        /**
+         * This class contains the two boxes that have information on the output
+         * of the function the user is plotting. Its just like `InputInfoBox`,
+         * but it calculates the output.
+         *
+         * @see InputInfoBox
+         */
+        private class OutputInfoBox extends JPanel implements TriggerListener{
+
+            // Private Variables: ----------------------------------------------
+
+            // We will need these later
+            JLabel re = new JLabel("Re(z) = ");
+            JLabel im = new JLabel("Im(z) = ");
+            JLabel abs = new JLabel("|z| = ");
+            JLabel arg = new JLabel("arg(z) = ");
+
+
+            // Constructors: ---------------------------------------------------
+
+            public OutputInfoBox(){
+                this.setLayout(new GridLayout(3,2,10,10));
+                // Use compound border to get line and margins
+                this.setBorder(BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(Color.BLACK),
+                        BorderFactory.createEmptyBorder(10,10,10,10)
+                ));
+
+                // Title label and labels for re, im, r, and theta
+                // Title
+                this.add(new JLabel("Output:"));
+
+                // Placeholder
+                this.add(new JPanel());
+
+                // Add info labels
+                this.add(re);
+                this.add(abs);
+                this.add(im);
+                this.add(arg);
+
+                // We want to know when the user points to a new point
+                pointList.add(this);
+            }
+
+
+            // Public Methods: -------------------------------------------------
+
+            public void onTrigger(){
+                // Calculate the result
+                Complex res = ComplexMath.parsePostfix(currentFunc,lastPointed);
+
+                // Update the text on each of the parts
+                re.setText(String.format("Re(z) = %.3f", res.getRe()));
+                im.setText(String.format("Im(z) = %.3f", res.getIm()));
+                abs.setText(String.format("|z| = %.3f", res.getAbs()));
+                arg.setText(String.format("arg(z) = %.3f", res.getArg()));
             }
 
         }
