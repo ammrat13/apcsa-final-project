@@ -189,7 +189,7 @@ public class Complex {
         // If it is an imaginary number: matches an optional negative, then an
         //  integer, followed by an optional decimal point, followed by an
         //  optional decimal part, followed by "i" or "j"
-        if(s.matches("\\-?[0-9]+\\.?[0-9]*(i|j)")){
+        if(s.matches("\\-?[0-9]+\\.?[0-9]*[ij]]")){
             // The last part can be converted to a double, so strip the last
             //  character ("i" or "j")
             return new Complex(0, Double.parseDouble(s.substring(0,s.length()-1)));
@@ -197,10 +197,10 @@ public class Complex {
 
         // If it is a complex number: matches a real number, a plus or minus,
         //  then another real number, then "i" or "j"
-        if(s.matches("\\-?[0-9]+\\.?[0-9]*(\\+|\\-)[0-9]\\.?[0-9]*(i|j)")){
+        if(s.matches("\\-?[0-9]+\\.?[0-9]*[\\+\\-][0-9]\\.?[0-9]*[ij]]")){
             // Get the real and imaginary parts
-            String real = s.split("(\\+|\\-)")[0];
-            String imag = s.split("(\\+|\\-)")[1];
+            String real = s.split("[\\+\\-]")[0];
+            String imag = s.split("[\\+\\-]")[1];
             // Change depending on if it was plus or minus in the middle
             if(s.contains("+")) {
                 return new Complex(

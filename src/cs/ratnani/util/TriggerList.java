@@ -16,7 +16,7 @@ public class TriggerList {
 
     // Private Variables: ------------------------------------------------------
 
-    ArrayList<TriggerListener> listeners;
+    private final ArrayList<TriggerListener> listeners;
 
 
     // Constructors: -----------------------------------------------------------

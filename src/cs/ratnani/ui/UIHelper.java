@@ -15,7 +15,7 @@ import java.util.Scanner;
  * @author Ammar Ratnani
  * @version 0.0
  */
-public class UIHelper {
+class UIHelper {
 
     // Constants: --------------------------------------------------------------
 
@@ -31,7 +31,7 @@ public class UIHelper {
      * @param n The name of the file to read
      * @return The file's contents
      */
-    public static String readFile(String n){
+    static String readFile(String n){
         try{
             String ret = "";
             Scanner fScan = new Scanner(new File(n));
@@ -53,7 +53,7 @@ public class UIHelper {
      *
      * @param n The name of the wav file to play
      */
-    public static void playSoundNonBlocking(String n){
+    static void playSoundNonBlocking(String n){
         // Non-blocking
         new Thread(() -> {
             try {
@@ -80,7 +80,7 @@ public class UIHelper {
      * @param imUp The upper bound on the imaginary axis
      * @param imDo The lower bound on the imaginary axis
      */
-    public static void writePlotTo(File F, String f, double reUp, double reDo,
+    static void writePlotTo(File F, String f, double reUp, double reDo,
                                    double imUp, double imDo){
         int exportWidth = (int) (EXPORT_HEIGHT * (reUp-reDo) / (imUp - imDo));
             // Scale `exportWidth` so it matches the aspect ratio of the bounds

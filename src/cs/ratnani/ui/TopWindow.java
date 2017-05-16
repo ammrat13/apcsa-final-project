@@ -30,8 +30,8 @@ public class TopWindow extends JFrame {
     private static final String ABOUT_TEXT_PATH = "res\\about.txt";
     private final String ABOUT_TEXT;
 
-    // For `UIHelper`
-    public static final String ERROR_SOUND_PATH = "res\\error.wav";
+    // For `UIHelper`, make it package-private
+    static final String ERROR_SOUND_PATH = "res\\error.wav";
 
 
     // Private Variables: ------------------------------------------------------
@@ -56,10 +56,10 @@ public class TopWindow extends JFrame {
     private Complex lastPointed = new Complex();
 
     // For when "repaint()" needs to be called on the plot area
-    private TriggerList plotList = new TriggerList();
+    private final TriggerList plotList = new TriggerList();
 
     // For when the user points to a new number
-    private TriggerList pointList = new TriggerList();
+    private final TriggerList pointList = new TriggerList();
 
 
     // Constructors: -----------------------------------------------------------
@@ -366,7 +366,7 @@ public class TopWindow extends JFrame {
                 private BufferedImage currentImage = null;
                 private boolean imageReady = false;
 
-                // To check if we have resized
+                // To check if we have re-sized
                 private int lastWidth;
                 private int lastHeight;
 
@@ -527,10 +527,10 @@ public class TopWindow extends JFrame {
             // Private Variables: ----------------------------------------------
 
             // We will need these later
-            JLabel re = new JLabel("Re(z) = ");
-            JLabel im = new JLabel("Im(z) = ");
-            JLabel abs = new JLabel("|z| = ");
-            JLabel arg = new JLabel("arg(z) = ");
+            private final JLabel re = new JLabel("Re(z) = ");
+            private final JLabel im = new JLabel("Im(z) = ");
+            private final JLabel abs = new JLabel("|z| = ");
+            private final JLabel arg = new JLabel("arg(z) = ");
 
 
             // Constructors: ---------------------------------------------------
@@ -595,10 +595,10 @@ public class TopWindow extends JFrame {
             // Private Variables: ----------------------------------------------
 
             // We will need these later
-            JLabel re = new JLabel("Re(z) = ");
-            JLabel im = new JLabel("Im(z) = ");
-            JLabel abs = new JLabel("|z| = ");
-            JLabel arg = new JLabel("arg(z) = ");
+            private final JLabel re = new JLabel("Re(z) = ");
+            private final JLabel im = new JLabel("Im(z) = ");
+            private final JLabel abs = new JLabel("|z| = ");
+            private final JLabel arg = new JLabel("arg(z) = ");
 
 
             // Constructors: ---------------------------------------------------
