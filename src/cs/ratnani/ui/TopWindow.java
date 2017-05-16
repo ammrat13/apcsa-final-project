@@ -20,7 +20,7 @@ import java.io.IOException;
  * are all of its components.
  *
  * @author Ammar Ratnani
- * @version 0.0
+ * @version 2017.05.16
  */
 public class TopWindow extends JFrame {
 

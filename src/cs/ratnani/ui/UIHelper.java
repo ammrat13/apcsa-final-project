@@ -13,7 +13,7 @@ import java.util.Scanner;
  * A helper class for the UI that contains utility functions.
  *
  * @author Ammar Ratnani
- * @version 0.0
+ * @version 2017.05.16
  */
 class UIHelper {
 

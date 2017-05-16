@@ -10,7 +10,7 @@ import java.util.ArrayList;
  *
  * @see TriggerListener
  * @author Ammar Ratnani
- * @version 0.0
+ * @version 2017.05.16
  */
 public class TriggerList {
 

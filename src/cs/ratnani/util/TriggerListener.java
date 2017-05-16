@@ -6,7 +6,7 @@ package cs.ratnani.util;
  *
  * @see TriggerList
  * @author Ammar Ratnani
- * @version 0.0
+ * @version 2017.05.16
  */
 public interface TriggerListener {
     void onTrigger();

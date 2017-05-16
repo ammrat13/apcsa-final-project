@@ -8,7 +8,7 @@ import cs.ratnani.ui.TopWindow;
  * method: `main`, which will do just that.
  *
  * @author Ammar Ratnani
- * @version 0.0
+ * @version 2017.05.16
  */
 public class Main {
     public static void main(String[] args) {
