@@ -575,10 +575,10 @@ public class TopWindow extends JFrame {
 
             public void onTrigger(){
                 // Update the text on each of the parts to at most ten digits
-                re.setText(String.format("Re(z) = %10.3f", lastPointed.getRe()));
-                im.setText(String.format("Im(z) = %10.3f", lastPointed.getIm()));
-                abs.setText(String.format("|z| = %10.3f", lastPointed.getAbs()));
-                arg.setText(String.format("arg(z) = %10.3f", lastPointed.getArg()));
+                re.setText(String.format("Re(z) = %.3f", lastPointed.getRe()));
+                im.setText(String.format("Im(z) = %.3f", lastPointed.getIm()));
+                abs.setText(String.format("|z| = %.3f", lastPointed.getAbs()));
+                arg.setText(String.format("arg(z) = %.3f", lastPointed.getArg()));
             }
 
         }
@@ -646,10 +646,10 @@ public class TopWindow extends JFrame {
                 Complex res = ComplexMath.parsePostfix(currentFunc,lastPointed);
 
                 // Update the text on each of the parts to ten digits max
-                re.setText(String.format("Re(z) = %10.3f", res.getRe()));
-                im.setText(String.format("Im(z) = %10.3f", res.getIm()));
-                abs.setText(String.format("|z| = %10.3f", res.getAbs()));
-                arg.setText(String.format("arg(z) = %10.3f", res.getArg()));
+                re.setText(String.format("Re(z) = %.3f", res.getRe()));
+                im.setText(String.format("Im(z) = %.3f", res.getIm()));
+                abs.setText(String.format("|z| = %.3f", res.getAbs()));
+                arg.setText(String.format("arg(z) = %.3f", res.getArg()));
             }
 
         }
