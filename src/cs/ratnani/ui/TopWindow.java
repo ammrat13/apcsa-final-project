@@ -252,7 +252,7 @@ public class TopWindow extends JFrame {
 
             // We add the plot to the layout
             GridBagConstraints plotC = new GridBagConstraints();
-            plotC.gridx = 0;
+            plotC.gridx = 1;
             plotC.gridy = 0;
             plotC.gridheight = 2;
                 // The info boxes each take one row
@@ -264,7 +264,7 @@ public class TopWindow extends JFrame {
 
             // Input info box
             GridBagConstraints inpC = new GridBagConstraints();
-            inpC.gridx = 1;
+            inpC.gridx = 0;
             inpC.gridy = 0;
             inpC.fill = GridBagConstraints.BOTH;
             inpC.weighty = .5;
@@ -274,7 +274,7 @@ public class TopWindow extends JFrame {
 
             // Output info box
             GridBagConstraints outC = new GridBagConstraints();
-            outC.gridx = 1;
+            outC.gridx = 0;
             outC.gridy = 1;
             outC.fill = GridBagConstraints.BOTH;
             outC.weighty = .5;
@@ -578,7 +578,7 @@ public class TopWindow extends JFrame {
                 re.setText(String.format("Re(z) = %.3f", lastPointed.getRe()));
                 im.setText(String.format("Im(z) = %.3f", lastPointed.getIm()));
                 abs.setText(String.format("|z| = %.3f", lastPointed.getAbs()));
-                arg.setText(String.format("arg(z) = %.3f", lastPointed.getArg()));
+                arg.setText(String.format("arg(z) = %.3f rad", lastPointed.getArg()));
             }
 
         }
@@ -649,7 +649,7 @@ public class TopWindow extends JFrame {
                 re.setText(String.format("Re(z) = %.3f", res.getRe()));
                 im.setText(String.format("Im(z) = %.3f", res.getIm()));
                 abs.setText(String.format("|z| = %.3f", res.getAbs()));
-                arg.setText(String.format("arg(z) = %.3f", res.getArg()));
+                arg.setText(String.format("arg(z) = %.3f rad", res.getArg()));
             }
 
         }
