@@ -262,6 +262,22 @@ public class ComplexMath {
                             vals.push(cos(vals.pop()));
                             break;
                         }
+                        case "abs": {
+                            vals.push(new Complex(vals.pop().getAbs()));
+                            break;
+                        }
+                        case "arg": {
+                            vals.push(new Complex(vals.pop().getArg()));
+                            break;
+                        }
+                        case "re": {
+                            vals.push(new Complex(vals.pop().getRe()));
+                            break;
+                        }
+                        case "im": {
+                            vals.push(new Complex(vals.pop().getIm()));
+                            break;
+                        }
                         default: {
                             throw new IllegalArgumentException("Token '" + t + "' not defined");
                         }
