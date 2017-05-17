@@ -20,7 +20,7 @@ import java.io.IOException;
  * are all of its components.
  *
  * @author Ammar Ratnani
- * @version 2017.05.16
+ * @version 2017.05.17
  */
 public class TopWindow extends JFrame {
 
@@ -42,6 +42,7 @@ public class TopWindow extends JFrame {
     private JTextField reDoField;
     private JTextField imUpField;
     private JTextField imDoField;
+    private JButton plotButton;
 
     // To store the values for each text box, to be set when the user hits
     //  "Plot"
@@ -134,7 +135,7 @@ public class TopWindow extends JFrame {
 
 
             // JButton
-            JButton plotButton = new JButton("Plot...");
+            plotButton = new JButton("Plot...");
             // OnClick
             plotButton.addActionListener(
                     e -> {
@@ -162,6 +163,13 @@ public class TopWindow extends JFrame {
             // JTextField
             funcField = new JTextField(Integer.MAX_VALUE);
                 // No bound on the columns
+            // ActionListener for text fields detect enter
+            funcField.addActionListener(
+                    e -> {
+                        // Make it like the user hits "Plot..."
+                        plotButton.doClick();
+                    }
+            );
             GridBagConstraints funcFieldC = new GridBagConstraints();
             funcFieldC.gridx = 1;
             funcFieldC.gridy = 0;
@@ -302,6 +310,13 @@ public class TopWindow extends JFrame {
                 imUpField = new JTextField(5);
                 imUpField.setText("15");
                 imUpField.setHorizontalAlignment(JTextField.CENTER);
+                // ActionListener for text fields detect enter
+                imUpField.addActionListener(
+                        e -> {
+                            // Make it like the user hits "Plot..."
+                            plotButton.doClick();
+                        }
+                );
                 GridBagConstraints imUpC = new GridBagConstraints();
                 imUpC.gridx = 1;
                 imUpC.gridy = 0;
@@ -311,6 +326,13 @@ public class TopWindow extends JFrame {
                 imDoField = new JTextField(5);
                 imDoField.setText("-15");
                 imDoField.setHorizontalAlignment(JTextField.CENTER);
+                // ActionListener for text fields detect enter
+                imDoField.addActionListener(
+                        e -> {
+                            // Make it like the user hits "Plot..."
+                            plotButton.doClick();
+                        }
+                );
                 GridBagConstraints imDoC = new GridBagConstraints();
                 imDoC.gridx = 1;
                 imDoC.gridy = 2;
@@ -320,6 +342,13 @@ public class TopWindow extends JFrame {
                 reUpField = new JTextField(5);
                 reUpField.setText("15");
                 reUpField.setHorizontalAlignment(JTextField.CENTER);
+                // ActionListener for text fields detect enter
+                reUpField.addActionListener(
+                        e -> {
+                            // Make it like the user hits "Plot..."
+                            plotButton.doClick();
+                        }
+                );
                 GridBagConstraints reUpC = new GridBagConstraints();
                 reUpC.gridx = 2;
                 reUpC.gridy = 1;
@@ -329,6 +358,13 @@ public class TopWindow extends JFrame {
                 reDoField = new JTextField(5);
                 reDoField.setText("-15");
                 reDoField.setHorizontalAlignment(JTextField.CENTER);
+                // ActionListener for text fields detect enter
+                reDoField.addActionListener(
+                        e -> {
+                            // Make it like the user hits "Plot..."
+                            plotButton.doClick();
+                        }
+                );
                 GridBagConstraints reDoC = new GridBagConstraints();
                 reDoC.gridx = 0;
                 reDoC.gridy = 1;
