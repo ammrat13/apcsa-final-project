@@ -13,7 +13,7 @@ import java.util.Scanner;
  * A helper class for the UI that contains utility functions.
  *
  * @author Ammar Ratnani
- * @version 2017.05.16
+ * @version 2017.05.17
  */
 class UIHelper {
 
@@ -37,7 +37,7 @@ class UIHelper {
             Scanner fScan = new Scanner(new File(n));
             // Read each line
             while(fScan.hasNextLine())
-                ret += fScan.nextLine();
+                ret += fScan.nextLine() + "\n";
             return ret;
         } catch(IOException e){
             e.printStackTrace();
