@@ -15,12 +15,6 @@ import java.awt.*;
  */
 public class Complex {
 
-    // Constants: --------------------------------------------------------------
-
-    // Coefficient to specify the maximum value of H in the color
-    private final double C_H = .68;
-
-
     // Instance Variables: -----------------------------------------------------
 
     // We store in re-im format
@@ -99,6 +93,9 @@ public class Complex {
      * @return The color of this number
      */
     public Color getColor(){
+        // Coefficient to specify the maximum value of H
+        double c_H = .68;
+
         // If either part of the number is NaN or +/-Infinity, return white
         if(Double.isNaN(re) || Double.isInfinite(re)
                 || Double.isNaN(im) || Double.isInfinite(im)){
@@ -109,7 +106,7 @@ public class Complex {
         //  https://en.wikipedia.org/wiki/Color_wheel_graphs_of_complex_functions
         double H = (Math.PI + getArg()) % (2*Math.PI);
             // We do mod 2*pi so H is never over 2*pi
-        double L = (1 - Math.pow(2.0, -1*getAbs())) * C_H;
+        double L = (1 - Math.pow(2.0, -1*getAbs())) * c_H;
             // Coefficient to prevent the color from being too white
         double S = 1.0;
 
@@ -181,7 +178,7 @@ public class Complex {
         // If it is a real number: matches an optional negative, then an
         //  integer, followed by an optional point, followed by an optional
         //  decimal part
-        if(s.matches("\\-?[0-9]+\\.?[0-9]*")){
+        if(s.matches("-?[0-9]+\\.?[0-9]*")){
             // If it matches, we can parse to a double
             return new Complex(Double.parseDouble(s),0);
         }
@@ -189,7 +186,7 @@ public class Complex {
         // If it is an imaginary number: matches an optional negative, then an
         //  integer, followed by an optional decimal point, followed by an
         //  optional decimal part, followed by "i" or "j"
-        if(s.matches("\\-?[0-9]+\\.?[0-9]*[ij]]")){
+        if(s.matches("-?[0-9]+\\.?[0-9]*[ij]]")){
             // The last part can be converted to a double, so strip the last
             //  character ("i" or "j")
             return new Complex(0, Double.parseDouble(s.substring(0,s.length()-1)));
@@ -197,10 +194,10 @@ public class Complex {
 
         // If it is a complex number: matches a real number, a plus or minus,
         //  then another real number, then "i" or "j"
-        if(s.matches("\\-?[0-9]+\\.?[0-9]*[\\+\\-][0-9]\\.?[0-9]*[ij]]")){
+        if(s.matches("-?[0-9]+\\.?[0-9]*[+-][0-9]\\.?[0-9]*[ij]]")){
             // Get the real and imaginary parts
-            String real = s.split("[\\+\\-]")[0];
-            String imag = s.split("[\\+\\-]")[1];
+            String real = s.split("[+-]")[0];
+            String imag = s.split("[+-]")[1];
             // Change depending on if it was plus or minus in the middle
             if(s.contains("+")) {
                 return new Complex(

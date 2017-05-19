@@ -564,7 +564,7 @@ public class TopWindow extends JFrame {
                  * coordinates of the click/drag and notify all that are
                  * listening.
                  *
-                 * @param e
+                 * @param e The mouse event to get the X and Y from
                  */
                 private void updateLastPointed(MouseEvent e){
                     // Update lastPointed to what the user was on

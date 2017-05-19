@@ -25,10 +25,6 @@ public class TriggerList {
         listeners = new ArrayList<>();
     }
 
-    public TriggerList(ArrayList<TriggerListener> l){
-        listeners = l;
-    }
-
 
     // Public Methods: ---------------------------------------------------------
 

@@ -32,7 +32,7 @@ public class ComplexMath {
 
     /**
      * @param a The minuend
-     * @param b The subractend
+     * @param b The subtrahend
      * @return a-b
      */
     public static Complex sub(Complex a, Complex b){
