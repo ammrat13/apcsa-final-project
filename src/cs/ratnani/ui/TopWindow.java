@@ -8,6 +8,7 @@ import cs.ratnani.util.TriggerListener;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -422,27 +423,31 @@ public class TopWindow extends JFrame {
                     this.addMouseMotionListener(new MouseMotionListener() {
                         @Override
                         public void mouseDragged(MouseEvent e) {
-                            // Update lastPointed to what the user was on
-                            lastPointed = new Complex(
-                                    ComplexMath.numAtC(
-                                            e.getX(),
-                                            lastWidth,
-                                            reUpT,
-                                            reDoT
-                                    ),
-                                    ComplexMath.numAtR(
-                                            e.getY(),
-                                            lastHeight,
-                                            imUpT,
-                                            imDoT
-                                    )
-                            );
-                            pointList.trigger();
+                            updateLastPointed(e);
                             repaint();
                         }
 
                         @Override
-                        public void mouseMoved(MouseEvent e) { /* Do Nothing */ }
+                        public void mouseMoved(MouseEvent e) {}
+                    });
+                    this.addMouseListener(new MouseListener() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {}
+
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                            updateLastPointed(e);
+                            repaint();
+                        }
+
+                        @Override
+                        public void mouseReleased(MouseEvent e) {}
+
+                        @Override
+                        public void mouseEntered(MouseEvent e) {}
+
+                        @Override
+                        public void mouseExited(MouseEvent e) {}
                     });
                 }
 
@@ -548,6 +553,37 @@ public class TopWindow extends JFrame {
 
                 public void onTrigger() {
                     this.repaint();
+                }
+
+
+                // Private Methods: --------------------------------------------
+
+                /**
+                 * This method will, given a mouse event, update the variable
+                 * `lastPointed` to the Complex number indicated by the
+                 * coordinates of the click/drag and notify all that are
+                 * listening.
+                 *
+                 * @param e
+                 */
+                private void updateLastPointed(MouseEvent e){
+                    // Update lastPointed to what the user was on
+                    lastPointed = new Complex(
+                            ComplexMath.numAtC(
+                                    e.getX(),
+                                    lastWidth,
+                                    reUpT,
+                                    reDoT
+                            ),
+                            ComplexMath.numAtR(
+                                    e.getY(),
+                                    lastHeight,
+                                    imUpT,
+                                    imDoT
+                            )
+                    );
+                    // Notify all
+                    pointList.trigger();
                 }
 
             }
