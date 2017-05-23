@@ -81,7 +81,11 @@ public class Complex {
     public double getAbs(){ return Math.sqrt(re*re + im*im); }
 
     /** @return The complex argument (theta) of this number in radians */
-    public double getArg(){ return Math.atan2(im, re); }
+    public double getArg(){
+        double ret = Math.atan2(im, re);
+        // Keep it positive
+        return ret <= 0.0 ? ret + 2*Math.PI : ret;
+    }
 
     /**
      * Returns the color of this number as specified on RapidTables:
@@ -170,34 +174,38 @@ public class Complex {
      * @return The complex number represented by `s`.
      */
     public static Complex parseComplex(String s){
-        // Only case not handled below: "i"
-        if(s.equals("i")){
-            return new Complex(0,1);
-        }
 
         // If it is a real number: matches an optional negative, then an
         //  integer, followed by an optional point, followed by an optional
         //  decimal part
-        if(s.matches("-?[0-9]+\\.?[0-9]*")){
+        if(s.matches("-?[0-9]+\\.?[0-9]*"))
             // If it matches, we can parse to a double
             return new Complex(Double.parseDouble(s),0);
-        }
 
         // If it is an imaginary number: matches an optional negative, then an
         //  integer, followed by an optional decimal point, followed by an
         //  optional decimal part, followed by "i" or "j"
-        if(s.matches("-?[0-9]+\\.?[0-9]*[ij]]")){
+        if(s.matches("-?[0-9]+\\.?[0-9]*[ij]"))
             // The last part can be converted to a double, so strip the last
             //  character ("i" or "j")
-            return new Complex(0, Double.parseDouble(s.substring(0,s.length()-1)));
-        }
+            return new Complex(0, Double.parseDouble(s.substring(0, s.length() - 1)));
+            // Only cases not handled above: "+/-i"
+        else if(s.equals("i"))
+            return new Complex(0, 1);
+        else if(s.equals("-i"))
+            return new Complex(0, -1);
 
         // If it is a complex number: matches a real number, a plus or minus,
-        //  then another real number, then "i" or "j"
-        if(s.matches("-?[0-9]+\\.?[0-9]*[+-][0-9]\\.?[0-9]*[ij]]")){
+        //  then another optional real number, then "i" or "j"
+        if(s.matches("-?[0-9]+\\.?[0-9]*[+-][0-9]*\\.?[0-9]*[ij]")){
             // Get the real and imaginary parts
             String real = s.split("[+-]")[0];
             String imag = s.split("[+-]")[1];
+
+            // We expect a coefficient
+            if(imag.equals("i"))
+                imag = "1i";
+
             // Change depending on if it was plus or minus in the middle
             if(s.contains("+")) {
                 return new Complex(
