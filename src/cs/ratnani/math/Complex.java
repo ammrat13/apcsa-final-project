@@ -80,12 +80,8 @@ public class Complex {
     /** @return The complex modulus (absolute value) of this number */
     public double getAbs(){ return Math.sqrt(re*re + im*im); }
 
-    /** @return The complex argument (theta) of this number in radians */
-    public double getArg(){
-        double ret = Math.atan2(im, re);
-        // Keep it positive
-        return ret <= 0.0 ? ret + 2*Math.PI : ret;
-    }
+    /** @return The complex argument (theta) of this number in radians between -pi and pi */
+    public double getArg(){ return Math.atan2(im, re); }
 
     /**
      * Returns the color of this number as specified on RapidTables:
