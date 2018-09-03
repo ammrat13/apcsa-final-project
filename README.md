@@ -7,11 +7,10 @@ This program allows you to plot complex functions. Complex numbers can be colore
 # To Compile and Run
 Run:
 1. `git clone https://github.com/ammrat13/apcsa-final-project`
-2. `cd apcsa-final-project`
-3. `javac -cp src cs/ratnani/Main.java`
-4. `mv res/ src/res/`
-5. `cd src`
-6. `java -cp . cs.ratnani.Main`
+2. `cd apcsa-final-project/src`
+3. `javac -cp . cs/ratnani/Main.java`
+4. `mv ../res/ res/`
+5. `java -cp . cs.ratnani.Main`
 
 # To Use
 Type in the function you wish to plot in postfix notation in the text box at the top of the screen. Then, set the area of the plot with the text boxes around the plot area on the right. Then hit "Plot...". The plot will then load and you will see it displayed on the right panel. You may click and drag your mouse over the plot. A red circle will appear at your cursor, representing an input to the function, and a green circle will appear the the point on the plot corresponding to the function's value at the point you clicked. Details about the input and output, such as real part, imaginary part, complex modulus (absolute value), and complex argument (angle) can be seen on the left hand panel.
