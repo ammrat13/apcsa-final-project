@@ -28,11 +28,11 @@ public class TopWindow extends JFrame {
     // Constants: --------------------------------------------------------------
 
     // TODO: Remember to ship with the `res` directory
-    private static final String ABOUT_TEXT_PATH = "res\\about.txt";
+    private static final String ABOUT_TEXT_PATH = "res/about.txt";
     private final String ABOUT_TEXT;
 
     // For `UIHelper`, make it package-private
-    static final String ERROR_SOUND_PATH = "res\\error.wav";
+    static final String ERROR_SOUND_PATH = "res/error.wav";
 
 
     // Private Variables: ------------------------------------------------------
